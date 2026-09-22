@@ -2,6 +2,7 @@
 	"en": {
 		"locale_name": "English",
 		"project_title": "gobbo datacron",
+		"plan_aug_s": "{{stat}} Augments",
 		"budget_gear_tert": "Tertiary provided per gear",
 		"budget_imp_tert": "Tertiary provided per implant",
 		"budget_aug_tert": "Tertiary provided per augment",

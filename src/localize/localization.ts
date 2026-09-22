@@ -5,10 +5,14 @@ type Locale = { locale_name: string, [k: string]: string }
 export type LinkIdent = keyof typeof validLinks
 export type TranslatedTuple = { text: string, attributes?: Map<string, string> }
 export type TranslatedParagraph = TranslatedTuple[]
-export type TranslateContext = { [k: string]: string | number } | undefined
+type TranslateContextItem = string | number | boolean
+export type TranslateContext = { [k: string]: TranslateContextItem | TranslateContextItem[] } | undefined
 
 const rgxInterpolation = /{{\s*(?:%(\S+)\b|'([^}]+)'|(\S+)\b)([^}]*?)}}/g
 const L10N = localizationJson as { [loc: string]: Locale }
+
+const trListKey = ",[]"
+const trDelimiterKey = ", "
 
 const fallbackLocaleKey = "en"
 let localeKey = ""
@@ -77,16 +81,56 @@ export function getCurrentLocaleKey() {
 	return localeKey
 }
 
-function translate(key: string, locale: string, ctx: TranslateContext, inheritedAttrs: Map<string, string> | undefined = undefined) {
-	let localization = L10N[locale]
-	if (!localization.hasOwnProperty(key)) {
-		if (!L10N[fallbackLocaleKey].hasOwnProperty(key))
-			return [[{ text: "<missing loc: " + key + ">" }]]
-		localization = L10N[fallbackLocaleKey]
+function parseContextItem(ctx: TranslateContext, item: TranslateContextItem) {
+	const text = item.toString()
+	if (text.length > 1 && text.charAt(0) === "%") {
+		const textRef = text.substring(1)
+		if (textRef.charAt(0) === "%")
+			return textRef
+		return trText(textRef, ctx)
+	}
+	return text
+}
+
+function getContextString(ctx: TranslateContext, key: string) {
+	const item = ctx ? ctx[key] : undefined
+	if (!item)
+		return "<missing ctx: " + key + ">"
+
+	if (item instanceof Array) {
+		const trItems = item.map(i => parseContextItem(ctx, i))
+		if (ctx && ctx[",sort"])
+			trItems.sort()
+
+		return trItems.join((ctx && ctx[", "]?.toString()) ?? trText(", "))
 	}
 
+	return parseContextItem(ctx, item)
+}
+
+function getLocalizedValue(key: string, locale: string) {
+	if (key === trListKey)
+		return "{{,items}}"
+
+	let localization = L10N[locale]
+	if (!localization.hasOwnProperty(key))
+		localization = L10N[fallbackLocaleKey]
+
+	if (!localization.hasOwnProperty(key)) {
+		if (key === trDelimiterKey)
+			return ", "
+		return undefined
+	}
+	return localization[key]
+}
+
+function translate(key: string, locale: string, ctx: TranslateContext, inheritedAttrs: Map<string, string> | undefined = undefined) {
+	const locVal = getLocalizedValue(key, locale)
+	if (!locVal)
+		return [[{ text: "<missing loc: " + key + ">" }]]
+
 	const results: TranslatedParagraph[] = []
-	const paragraphs = localization[key].split("\n\n")
+	const paragraphs = locVal.split("\n\n")
 
 	for (const pg of paragraphs) {
 		const paragraphResults: TranslatedParagraph = []
@@ -136,8 +180,7 @@ function translate(key: string, locale: string, ctx: TranslateContext, inherited
 							tuple.attributes.set(linkSplit[0], linkSplit[1])
 							tuple.text = getLinkUrl(linkSplit[1] as LinkIdent)
 						} else {
-							tuple.text = (ctx ? ctx[terpContextual]?.toString() : undefined)
-								?? ("<missing ctx: " + terpContextual + ">")
+							tuple.text = getContextString(ctx, terpContextual)
 						}
 					}
 

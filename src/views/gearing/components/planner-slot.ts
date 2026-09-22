@@ -11,7 +11,7 @@ import { GenericNumeric } from "../../../components/generic-numeric"
 function SetsList(gear: IGearModel, slot: ISlotModel) {
 	const sets = slot.relevantSets.value
 	if (sets.length > 0) {
-		return html`<div>${sets.map(s => trText("set_" + s)).sort().join(", ")}</div>`
+		return html`<${LocalizedElement} tr=",[]" ctx=${{ ",items": sets.map(s => "%set_" + s), ",sort": true }}/>`
 	}
 
 	return html`
