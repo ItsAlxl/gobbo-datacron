@@ -1,7 +1,7 @@
 import { signal, createModel, type ReadonlySignal, computed, type Signal } from '@preact/signals'
 import { getAlacrityTargetPercentage, getStatRating, statPercLimit, getAlacrityTargetRating } from "../calc-config"
 import { StatModel, type IStatModel, type IStatToggle, StatToggleModel, sortedPresetOptionsAsc, sortedPresetOptionsDesc } from "./stat-model"
-import { BodyGearSlots, type GearStatIdent, type GearBodySlotIdent } from "../sets"
+import { BodyGearSlots, type GearStatIdent, type GearBodySlotIdent, GearStats } from "../sets"
 import { SlotModel, type ISlotModel } from "./slot-model"
 
 type StatPresetOptions = { [k: string]: number }
@@ -106,6 +106,9 @@ export interface IGearModel {
 	offhandSlot: ISlotModel
 	earStat: ReadonlySignal<GearStatIdent>
 	setEarStat(s: GearStatIdent): void
+	getSlotRating(s: ISlotModel): ReadonlySignal<number>
+	plannedAugs: Record<GearStatIdent, ReadonlySignal<number>>
+	totalPlannedAugs: ReadonlySignal<number>
 }
 
 export const GearModel = createModel<IGearModel>(() => {
@@ -229,11 +232,15 @@ export const GearModel = createModel<IGearModel>(() => {
 		}
 	}
 
-	const bodySlots: Record<GearBodySlotIdent, ISlotModel> = {} as Record<GearBodySlotIdent, ISlotModel>
+	const bodySlots: Record<GearBodySlotIdent, ISlotModel> = {} as any
 	for (const slot of BodyGearSlots)
 		bodySlots[slot] = new SlotModel(slot)
 
 	const earStat = signal<GearStatIdent>("acc")
+
+	const plannedAugs: Record<GearStatIdent, Signal<number>> = {} as any
+	for (const stat of GearStats)
+		plannedAugs[stat] = signal(0)
 
 	return {
 		getThreshold: (s: BuildStatIdent) => thresholds[s],
@@ -261,7 +268,14 @@ export const GearModel = createModel<IGearModel>(() => {
 		getBodySlot: (s: GearBodySlotIdent) => bodySlots[s],
 		mainhandSlot: new SlotModel("mainhand"),
 		offhandSlot: new SlotModel("offhand"),
+		getSlotRating: (s: ISlotModel) => {
+			const rating = s.rating
+			return rating.value < 0 ? budget.gear_tert.amount : rating;
+		},
 		earStat,
 		setEarStat: (s: GearStatIdent) => earStat.value = s,
+		plannedAugs,
+		setPlannedAug: (s: GearStatIdent, n: number) => plannedAugs[s].value = n,
+		totalPlannedAugs: computed(() => GearStats.reduce((n, s) => n + plannedAugs[s].value, 0)),
 	}
 })

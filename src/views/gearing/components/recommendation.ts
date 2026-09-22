@@ -9,7 +9,7 @@ export function Recommendation(props: { gear: IGearModel, rec: GearRecommendatio
 	const imps = gear.implantContributions.value
 
 	return html`
-		<div class="grid grid-cols-5 text-right p-2 ${props.idx === 0 ? "border-2 border-secondary" : ""}">
+		<div class="grid grid-cols-5 text-right p-2 ${props.idx === 0 ? "ring-2 ring-secondary" : ""}">
 			<${LocalizedElement} tr="rec_stat"/>
 			<${LocalizedElement} tr="rec_ngears"/>
 			<${LocalizedElement} tr="rec_naugs"/>

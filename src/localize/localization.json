@@ -16,7 +16,6 @@
 		"gcd_x": "{{gcd}}s GCD",
 		"gear_implants": "Implant Stats",
 		"generic_counted": "[{{count}}] {{text}}",
-		"noset_msg": "No sets provide that stat for this slot!",
 		"noset_tert": "{{stat}} provided",
 		"preset_acc_110": "110% (PvE dps)",
 		"preset_acc_105": "105% (PvP dps)",
