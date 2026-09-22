@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+
+	<title>gobbo datacron</title>
+	<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+	<meta name="Description" content="Various tools and information for SWTOR players" />
+	<meta property="og:title" content="gobbo datacron" />
+	<meta property="og:description" content="Various tools and information for SWTOR players" />
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<script type="module" src="/src/index"></script>
+</head>
+
+<body class="min-h-screen bg-base-300 flex flex-col">
+	<div id="navbar" class="navbar bg-base-300 border-b-2 border-white/5 sticky top-0 z-100 px-4">
+		<div class="flex-1 flex flex-row">
+			<div class="text-2xl font-bold" data-loc-key="project_title"></div>
+			<div id="version-label" class="pl-2 self-end opacity-60"></div>
+		</div>
+		<div class="flex-none flex flex-row gap-2">
+			<a class="btn btn-ghost btn-square" href="https://github.com/ItsAlxl/gobbo-datacron" data-loc-tip="tip_source">
+				<span class="iconify-[tabler--code]"></span>
+			</a>
+			<div id="language-menu">
+				<button popovertarget="language-change" style="anchor-name:--language-change"
+					class="btn btn-ghost btn-square gap-1 px-1.5 font-bold" aria-label="Language"
+					data-loc-tip="tip_translate">
+					<span class="iconify-[tabler--language]"></span>
+					<svg class="mt-px hidden size-2 fill-current opacity-60 sm:inline-block"
+						xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2048 2048">
+						<path d="M1799 349l242 241-1017 1017L7 590l242-241 775 775 775-775z">
+						</path>
+					</svg>
+				</button>
+				<div popover="" id="language-change" style="position-anchor:--language-change"
+					class="dropdown dropdown-end bg-base-200 max-h-100 overflow-y-auto border-3 border-white/5 shadow-2xl outline-3 outline-black/5">
+					<ul id="language-list" class="menu w-full"></ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="grow flex flex-col" id="app"></div>
+</body>
+
+</html>

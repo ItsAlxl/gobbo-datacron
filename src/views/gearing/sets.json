@@ -1,0 +1,144 @@
+{
+	"mainhand": {
+		"crit": [
+			"boltblaster",
+			"forcehealer",
+			"forcelord",
+			"medtech",
+			"mender",
+			"pummeler",
+			"targeter"
+		],
+		"shield": [
+			"bulwark",
+			"demolisher",
+			"duelist"
+		]
+	},
+	"offhand": {
+		"alac": [
+			"boltblaster",
+			"forcehealer",
+			"forcelord",
+			"medtech",
+			"mender",
+			"pummeler",
+			"targeter"
+		],
+		"abs": [
+			"bulwark",
+			"demolisher",
+			"duelist"
+		]
+	},
+	"head": {
+		"acc": [
+			"forcelord",
+			"targeter"
+		],
+		"alac": [
+			"boltblaster",
+			"medtech",
+			"pummeler"
+		],
+		"crit": [
+			"forcehealer",
+			"mender"
+		],
+		"shield": [
+			"bulwark",
+			"duelist"
+		],
+		"abs": [
+			"demolisher"
+		]
+	},
+	"chest": {
+		"acc": [
+			"boltblaster",
+			"forcelord"
+		],
+		"alac": [
+			"medtech",
+			"pummeler",
+			"targeter"
+		],
+		"crit": [
+			"forcehealer",
+			"mender"
+		],
+		"shield": [
+			"demolisher"
+		],
+		"abs": [
+			"bulwark",
+			"duelist"
+		]
+	},
+	"gloves": {
+		"acc": [
+			"pummeler"
+		],
+		"alac": [
+			"forcehealer",
+			"mender",
+			"targeter"
+		],
+		"crit": [
+			"boltblaster",
+			"forcelord",
+			"medtech"
+		],
+		"shield": [
+			"bulwark",
+			"demolisher"
+		],
+		"abs": [
+			"duelist"
+		]
+	},
+	"pants": {
+		"acc": [
+			"boltblaster",
+			"pummeler"
+		],
+		"alac": [
+			"forcehealer",
+			"forcelord",
+			"mender"
+		],
+		"crit": [
+			"medtech",
+			"targeter"
+		],
+		"shield": [
+			"duelist"
+		],
+		"abs": [
+			"bulwark",
+			"demolisher"
+		]
+	},
+	"boots": {
+		"acc": [
+			"targeter"
+		],
+		"alac": [
+			"boltblaster",
+			"forcelord",
+			"mender"
+		],
+		"crit": [
+			"forcehealer",
+			"medtech",
+			"pummeler"
+		],
+		"shield": [
+			"bulwark",
+			"demolisher"
+		],
+		"abs": [
+			"duelist"
+		]
+	}
+}

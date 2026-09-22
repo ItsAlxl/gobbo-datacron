@@ -1,0 +1,6 @@
+{
+	"percentageLimit": 30,
+	"maxLevel": 80,
+	"exponentDenomFactor": 3.2,
+	"exponentBase": 0.9666666666666667
+}
