@@ -2,7 +2,6 @@
 	"en": {
 		"locale_name": "English",
 		"project_title": "gobbo datacron",
-		"plan_aug_s": "{{stat}} Augments",
 		"budget_gear_tert": "Tertiary provided per gear",
 		"budget_imp_tert": "Tertiary provided per implant",
 		"budget_aug_tert": "Tertiary provided per augment",
@@ -18,6 +17,8 @@
 		"gear_implants": "Implant Stats",
 		"generic_counted": "[{{count}}] {{text}}",
 		"noset_tert": "{{stat}} provided",
+		"plan_aug_s": "{{stat}} Augments",
+		"plan_aug_total": "Augments",
 		"preset_acc_110": "110% (PvE dps)",
 		"preset_acc_105": "105% (PvP dps)",
 		"preset_acc_dc": "100% (tank/healer)",

@@ -17,8 +17,8 @@ export type GearRecommendation = { gears: Record<TargetStatIdent, number>, augs:
 export const TargetStats = ["acc", "alac", "crit"] as const
 export type TargetStatIdent = typeof TargetStats[number]
 
-const NUM_GEARS = 8
-const NUM_AUGS = 14
+export const NUM_GEARS = 8
+export const NUM_AUGS = 14
 
 function calculateNumGear(target: number, per: number) {
 	return Math.max(0, Math.ceil(target / per))
@@ -108,6 +108,7 @@ export interface IGearModel {
 	setEarStat(s: GearStatIdent): void
 	getSlotRating(s: ISlotModel): ReadonlySignal<number>
 	plannedAugs: Record<GearStatIdent, ReadonlySignal<number>>
+	setPlannedAug(s: GearStatIdent, n: number): void
 	totalPlannedAugs: ReadonlySignal<number>
 }
 

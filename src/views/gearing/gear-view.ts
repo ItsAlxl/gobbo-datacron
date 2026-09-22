@@ -1,11 +1,12 @@
 import { html } from "htm/preact"
 import { LocalizedElement } from "../../localize/preact"
-import { type TargetStatIdent, GearModel, TargetStats } from "./models/gear-model"
-import { BodyGearSlots } from "./sets"
+import { type TargetStatIdent, GearModel, NUM_AUGS, TargetStats } from "./models/gear-model"
+import { BodyGearSlots, GearStats } from "./sets"
 import { Budget, Threshold } from "./components/preset-number"
 import { Recommendation } from "./components/recommendation"
 import { StatToggle } from "./components/stat-toggle"
 import { LoneSlot, SettedSlot } from "./components/planner-slot"
+import { PlannedAug } from "./components/planner-aug"
 
 function selectImplant(e: InputEvent) {
 	const elm = e.currentTarget as HTMLSelectElement
@@ -68,8 +69,14 @@ export function GearingView() {
 				${BodyGearSlots.map(s => html`<${SettedSlot} ident=${s} gear=${gear}/>`)}
 				<${LoneSlot} ident="ear" stat=${gear.earStat} setter=${gear.setEarStat}/>
 			</div>
-			<div class="flex flex-col gap-2">
-				planned augs
+			<div class="flex flex-col items-center justify-center gap-4">
+				<div class="flex flex-row gap-2">
+					<div class=${gear.totalPlannedAugs.value > NUM_AUGS ? "text-error" : undefined}>${gear.totalPlannedAugs}/${NUM_AUGS}</div>
+					<${LocalizedElement} tr="plan_aug_total"/>
+				</div>
+				<div class="grid grid-cols-2 gap-4">
+					${GearStats.map(s => PlannedAug({ gear: gear, stat: s }))}
+				</div>
 			</div>
 			<div class="grid grid-cols-2 gap-2">
 				stats readout
