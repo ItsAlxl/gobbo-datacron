@@ -94,7 +94,7 @@ function parseContextItem(ctx: TranslateContext, item: TranslateContextItem) {
 
 function getContextString(ctx: TranslateContext, key: string) {
 	const item = ctx ? ctx[key] : undefined
-	if (!item)
+	if (item === undefined)
 		return "<missing ctx: " + key + ">"
 
 	if (item instanceof Array) {
