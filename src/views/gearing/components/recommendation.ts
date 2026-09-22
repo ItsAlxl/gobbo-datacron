@@ -1,6 +1,7 @@
 import { html } from "htm/preact"
 import { LocalizedElement } from "../../../localize/preact"
-import { TargetStats, type GearRecommendation, type IGearModel } from "../models/gear-model"
+import { type GearRecommendation, type IGearModel } from "../models/gear-model"
+import { TargetStats } from "../sets"
 
 export function Recommendation(props: { gear: IGearModel, rec: GearRecommendation, idx: number }) {
 	const { gear, rec } = props
@@ -10,11 +11,11 @@ export function Recommendation(props: { gear: IGearModel, rec: GearRecommendatio
 
 	return html`
 		<div class="grid grid-cols-5 text-right p-2 ${props.idx === 0 ? "ring-2 ring-secondary" : ""}">
-			<${LocalizedElement} tr="rec_stat"/>
-			<${LocalizedElement} tr="rec_ngears"/>
-			<${LocalizedElement} tr="rec_naugs"/>
-			<${LocalizedElement} tr="rec_total"/>
-			<${LocalizedElement} tr="rec_overflow"/>
+			<${LocalizedElement} class="font-semibold" tr="result_stat"/>
+			<${LocalizedElement} class="font-semibold" tr="result_ngears"/>
+			<${LocalizedElement} class="font-semibold" tr="result_naugs"/>
+			<${LocalizedElement} class="font-semibold" tr="result_total"/>
+			<${LocalizedElement} class="font-semibold" tr="result_overflow"/>
 			${TargetStats.map(s => html`
 				<${LocalizedElement} tr="stat_${s}"/>
 				<span class="font-mono">${rec.gears[s]}</span>

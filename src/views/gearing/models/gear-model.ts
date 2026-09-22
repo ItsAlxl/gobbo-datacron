@@ -1,7 +1,7 @@
 import { signal, createModel, type ReadonlySignal, computed, type Signal } from '@preact/signals'
 import { getAlacrityTargetPercentage, getStatRating, statPercLimit, getAlacrityTargetRating } from "../calc-config"
 import { StatModel, type IStatModel, type IStatToggle, StatToggleModel, sortedPresetOptionsAsc, sortedPresetOptionsDesc } from "./stat-model"
-import { BodyGearSlots, type GearStatIdent, type GearBodySlotIdent, GearStats } from "../sets"
+import { BodyGearSlots, type GearStatIdent, type GearBodySlotIdent, GearStats, type TargetStatIdent } from "../sets"
 import { SlotModel, type ISlotModel } from "./slot-model"
 
 type StatPresetOptions = { [k: string]: number }
@@ -13,9 +13,6 @@ export type StatBudgetIdent = "gear_tert" | "imp_tert" | "aug_tert"
 type GearStrategyResult = { gears: number, augs: number, overflow: number }
 type GearStrategy = (target: number, perGear: number, maxGears: number, perAug: number, maxAugs: number) => GearStrategyResult
 export type GearRecommendation = { gears: Record<TargetStatIdent, number>, augs: Record<TargetStatIdent, number>, overflows: Record<ThresholdStatIdent, number> }
-
-export const TargetStats = ["acc", "alac", "crit"] as const
-export type TargetStatIdent = typeof TargetStats[number]
 
 export const NUM_GEARS = 8
 export const NUM_AUGS = 14
@@ -60,17 +57,6 @@ function naiveStatCount(target: number, perGear: number, _maxGears: number, perA
 	}
 }
 
-function getImplantContributions(imps: ReadonlySignal<TargetStatIdent>[], perImp: number) {
-	const result: Record<TargetStatIdent, number> = {
-		acc: 0,
-		alac: 0,
-		crit: 0
-	}
-	for (const imp of imps)
-		result[imp.value] += perImp
-	return result
-}
-
 function aIsSubsetOfB(a: Record<string, number>, b: Record<string, number>) {
 	for (const k of Object.keys(a)) {
 		if (a[k] !== b[k])
@@ -96,8 +82,8 @@ function isRecValid(r: GearRecommendation) {
 export interface IGearModel {
 	getThreshold(s: BuildStatIdent): IStatModel
 	getBudget(b: StatBudgetIdent): IStatModel
-	getImplant(idx: number): Signal<TargetStatIdent>
-	implantContributions: ReadonlySignal<Record<TargetStatIdent, number>>
+	getImplant(idx: number): Signal<GearStatIdent>
+	implantContributions: ReadonlySignal<Record<GearStatIdent, number>>
 	gearRecommendations: ReadonlySignal<GearRecommendation[]>
 	alacBufferToggle: IStatToggle
 	accBonusToggle: IStatToggle
@@ -110,6 +96,7 @@ export interface IGearModel {
 	plannedAugs: Record<GearStatIdent, ReadonlySignal<number>>
 	setPlannedAug(s: GearStatIdent, n: number): void
 	totalPlannedAugs: ReadonlySignal<number>
+	plannedStats: ReadonlySignal<Record<GearStatIdent, number>>
 }
 
 export const GearModel = createModel<IGearModel>(() => {
@@ -195,8 +182,20 @@ export const GearModel = createModel<IGearModel>(() => {
 			"336": 589,
 		}), sortedPresetOptionsDesc),
 	}
-	const implantTypes = [signal<TargetStatIdent>("crit"), signal<TargetStatIdent>("crit")]
-	const implantContributions = computed(() => getImplantContributions(implantTypes, budget.imp_tert.amount.value))
+	const implantTypes = [signal<GearStatIdent>("crit"), signal<GearStatIdent>("crit")]
+	const implantContributions = computed(() => {
+		const result: Record<GearStatIdent, number> = {
+			acc: 0,
+			alac: 0,
+			crit: 0,
+			abs: 0,
+			shield: 0,
+		}
+		const perImp = budget.imp_tert.amount.value
+		for (const imp of implantTypes)
+			result[imp.value] += perImp
+		return result
+	})
 
 	const createGearRecommendation = (strategy: GearStrategy, accFirst = true) => {
 		const perGear = budget.gear_tert.amount.value
@@ -233,6 +232,8 @@ export const GearModel = createModel<IGearModel>(() => {
 		}
 	}
 
+	const mainhandSlot = new SlotModel("mainhand")
+	const offhandSlot = new SlotModel("offhand")
 	const bodySlots: Record<GearBodySlotIdent, ISlotModel> = {} as any
 	for (const slot of BodyGearSlots)
 		bodySlots[slot] = new SlotModel(slot)
@@ -242,6 +243,36 @@ export const GearModel = createModel<IGearModel>(() => {
 	const plannedAugs: Record<GearStatIdent, Signal<number>> = {} as any
 	for (const stat of GearStats)
 		plannedAugs[stat] = signal(0)
+
+	const getSlotRating = (s: ISlotModel) => {
+		const rating = s.rating
+		return rating.value < 0 ? budget.gear_tert.amount : rating
+	}
+
+	const plannedStats = computed(() => {
+		const result: Record<GearStatIdent, number> = {
+			acc: 0,
+			alac: 0,
+			crit: 0,
+			abs: 0,
+			shield: 0,
+		}
+		const imps = implantContributions.value
+		for (const stat of GearStats) {
+			result[stat] += imps[stat] + plannedAugs[stat].value * budget.aug_tert.amount.value
+		}
+
+		function contributeSlot(slot: ISlotModel) {
+			result[slot.stat.value] += getSlotRating(slot).value
+		}
+
+		contributeSlot(mainhandSlot)
+		contributeSlot(offhandSlot)
+		for (const s of Object.values(bodySlots))
+			contributeSlot(s)
+
+		return result
+	})
 
 	return {
 		getThreshold: (s: BuildStatIdent) => thresholds[s],
@@ -267,16 +298,14 @@ export const GearModel = createModel<IGearModel>(() => {
 		alacBufferToggle,
 		accBonusToggle,
 		getBodySlot: (s: GearBodySlotIdent) => bodySlots[s],
-		mainhandSlot: new SlotModel("mainhand"),
-		offhandSlot: new SlotModel("offhand"),
-		getSlotRating: (s: ISlotModel) => {
-			const rating = s.rating
-			return rating.value < 0 ? budget.gear_tert.amount : rating;
-		},
+		mainhandSlot,
+		offhandSlot,
+		getSlotRating,
 		earStat,
 		setEarStat: (s: GearStatIdent) => earStat.value = s,
 		plannedAugs,
 		setPlannedAug: (s: GearStatIdent, n: number) => plannedAugs[s].value = n,
 		totalPlannedAugs: computed(() => GearStats.reduce((n, s) => n + plannedAugs[s].value, 0)),
+		plannedStats,
 	}
 })

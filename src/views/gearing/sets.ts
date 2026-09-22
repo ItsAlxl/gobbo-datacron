@@ -6,9 +6,15 @@ export const SetData = data as Record<GearBodySlotIdent, BodyGear> & {
 }
 
 export const GearSlots = ["mainhand", "offhand", "head", "chest", "gloves", "boots", "pants"] as const
-export const BodyGearSlots = GearSlots.filter(s => s !== "mainhand" && s !== "offhand")
 export type GearSlotIdent = typeof GearSlots[number]
-export type GearBodySlotIdent = Exclude<GearSlotIdent, "mainhand" | "offhand">
+export const BodyGearSlots = ["head", "chest", "gloves", "boots", "pants"] as const
+export type GearBodySlotIdent = typeof BodyGearSlots[number]
+
+export const TargetStats = ["acc", "alac", "crit"] as const
+export type TargetStatIdent = typeof TargetStats[number]
+
+export const TankStats = ["abs", "shield"] as const
+export type TankStatIdent = typeof TankStats[number]
 
 export const GearStats = ["acc", "alac", "crit", "abs", "shield"] as const
 export type GearStatIdent = typeof GearStats[number]
@@ -22,7 +28,7 @@ export const OffhandStats = ["alac", "abs"] as const
 export type OffhandStatIdent = typeof OffhandStats[number]
 export type OffhandGear = Record<OffhandStatIdent, GearSetIdent[]>
 
-export const GearSets = ["forcelord", "pummeler", "targeter", "boltblaster", "forcehealer", "medtech", "mender", "duelist", "bulwark", "demolisher"] as const
+export const GearSets = ["boltblaster", "bulwark", "demolisher", "duelist", "forcehealer", "forcelord", "medtech", "mender", "pummeler", "targeter"] as const
 export type GearSetIdent = typeof GearSets[number]
 
 export function getSlotSetsForStat(slot: GearSlotIdent, stat: GearStatIdent) {
