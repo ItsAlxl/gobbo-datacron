@@ -16,6 +16,8 @@
 		"gcd_x": "{{gcd}}s GCD",
 		"gear_implants": "Implant Stats",
 		"generic_counted": "[{{count}}] {{text}}",
+		"noset_msg": "No sets provide that stat for this slot!",
+		"noset_tert": "{{stat}} provided",
 		"preset_acc_110": "110% (PvE dps)",
 		"preset_acc_105": "105% (PvP dps)",
 		"preset_acc_dc": "100% (tank/healer)",
@@ -41,6 +43,8 @@
 		"rec_naugs": "Augs",
 		"rec_ngears": "Gears",
 		"rec_impossible": "Impossible",
+		"rec_stat": "Stat",
+		"rec_total": "Total",
 		"set_boltblaster": "Boltblaster",
 		"set_bulwark": "Bulwark",
 		"set_demolisher": "Demolisher",
@@ -69,10 +73,7 @@
 		"title_gear_calculator": "Calculator",
 		"title_gear_planner": "Planner",
 		"title_gear_recs": "Recommendations",
-		"rec_stat": "Stat",
 		"title_stat_budget": "Budget",
-		"title_stat_targets": "Target Build",
-		"rec_total": "Total",
-		"warn_no_sets": "No sets provide that stat for this slot!"
+		"title_stat_targets": "Target Build"
 	}
 }

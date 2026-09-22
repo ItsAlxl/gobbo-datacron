@@ -16,7 +16,11 @@ export const SlotModel = createModel<ISlotModel, [GearSlotIdent]>((slotIdent: Ge
 	const rating = signal(-1)
 	return {
 		stat,
-		setStat: (s: GearStatIdent) => stat.value = s,
+		setStat: (s: GearStatIdent) => {
+			stat.value = s
+			if (rating.value >= 0 && getSlotSetsForStat(slotIdent, s).length > 0)
+				rating.value = -1
+		},
 		relevantSets,
 		getSetsForStat: (s: GearStatIdent) => getSlotSetsForStat(slotIdent, s),
 		rating,

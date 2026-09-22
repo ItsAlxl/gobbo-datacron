@@ -62,10 +62,10 @@ export function GearingView() {
 		<${LocalizedElement} tr="title_gear_planner" class="font-bold text-xl pb-4"/>
 		<div class="grid grid-cols-3 self-stretch">
 			<div class="grid grid-cols-2 gap-2">
-				<${SettedSlot} ident="mainhand" slot=${gear.mainhandSlot}/>
-				<${SettedSlot} ident="offhand" slot=${gear.offhandSlot}/>
+				<${SettedSlot} ident="mainhand" gear=${gear} slot=${gear.mainhandSlot}/>
+				<${SettedSlot} ident="offhand" gear=${gear} slot=${gear.offhandSlot}/>
 				<div></div>
-				${BodyGearSlots.map(s => html`<${SettedSlot} ident=${s} slot=${gear.getBodySlot(s)}/>`)}
+				${BodyGearSlots.map(s => html`<${SettedSlot} ident=${s} gear=${gear}/>`)}
 				<${LoneSlot} ident="ear" stat=${gear.earStat} setter=${gear.setEarStat}/>
 			</div>
 		</div>
