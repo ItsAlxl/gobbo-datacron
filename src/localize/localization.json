@@ -91,8 +91,14 @@
 		"title_gear_recs": "Recommendations",
 		"title_stat_budget": "Budget",
 		"title_stat_targets": "Target Build",
+		"valor_current": "Current Valor",
+		"valor_lvl": "Level",
+		"valor_target": "Target Valor",
+		"valor_total": "Total XP",
+		"valor_xp": "XP",
 		"view_bounties": "Bounty Event Tracker",
 		"view_gear": "Gear Calculator",
-		"view_home": "Home"
+		"view_home": "Home",
+		"view_valor": "Valor Progress"
 	}
 }

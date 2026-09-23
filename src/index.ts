@@ -52,7 +52,7 @@ function goHome() {
 function View() {
 	const v = CurrentViewData.value
 	if (v)
-		return v.render()
+		return html`<${v.render}/>`
 
 	return html`
 		<h1 class="font-bold text-xl text-center">404</h1>
