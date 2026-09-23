@@ -1,0 +1,44 @@
+{
+	"alder": [
+		"aja",
+		"d3x",
+		"nov",
+		"sog",
+		"zin"
+	],
+	"home": [
+		"d3x",
+		"kar",
+		"nov",
+		"sog",
+		"zin"
+	],
+	"hutord": [
+		"aja",
+		"d3x",
+		"kar",
+		"trb",
+		"udo"
+	],
+	"shadaa": [
+		"aja",
+		"nov",
+		"trb",
+		"udo",
+		"zin"
+	],
+	"tat": [
+		"kar",
+		"nov",
+		"sog",
+		"udo",
+		"zin"
+	],
+	"voss": [
+		"aja",
+		"d3x",
+		"kar",
+		"sog",
+		"trb"
+	]
+}
