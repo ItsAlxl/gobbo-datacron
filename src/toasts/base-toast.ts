@@ -8,7 +8,7 @@ type ToastRemovalCallback = () => void
 
 export abstract class Toast<T extends ToastDetails = ToastDetails> {
 	style: ToastStyle = "btn-primary"
-	inner: string | VNode<{}> | VNode<{}>[] = ""
+	inner: string | VNode | VNode[] = ""
 	onclick?: (e: InputEvent) => void
 	cbRemove: ToastRemovalCallback
 	timeout?: number

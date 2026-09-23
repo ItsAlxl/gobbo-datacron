@@ -25,7 +25,7 @@ function listRecommendations() {
 }
 
 const gear = new GearModel()
-export function GearingView() {
+export function GearView() {
 	return html`
 		<${LocalizedElement} tr="title_gear_calculator" class="font-bold text-xl pb-4"/>
 		<div class="grid grid-cols-3 gap-8">

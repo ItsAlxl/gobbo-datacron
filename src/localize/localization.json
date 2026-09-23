@@ -75,6 +75,9 @@
 		"title_gear_planner": "Planner",
 		"title_gear_recs": "Recommendations",
 		"title_stat_budget": "Budget",
-		"title_stat_targets": "Target Build"
+		"title_stat_targets": "Target Build",
+		"view_bounties": "Bounty Event Tracker",
+		"view_gear": "Gear Calculator",
+		"view_home": "Home"
 	}
 }
