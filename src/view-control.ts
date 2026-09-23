@@ -4,15 +4,22 @@ import { computed, signal, type ReadonlySignal } from "@preact/signals"
 import { HomeView } from "./views/home/home-view"
 import { BountyView } from "./views/bounties/bounties-view"
 
-const View = signal<ViewIdent>("home")
+export const ViewNames = ["home", "gear", "bounties"] as const
+export type ViewIdent = typeof ViewNames[number]
+
+const startingView = new URLSearchParams(window.location.search).get("v") as ViewIdent | null
+
+const View = signal<ViewIdent>(startingView && ViewNames.includes(startingView) ? startingView : "home")
 export const CurrentViewIdent: ReadonlySignal = View
 export const CurrentViewData = computed(() => Views[View.value])
 export function GoToView(v: ViewIdent) {
 	View.value = v
+
+	const url = new URL(window.location.href)
+	url.searchParams.set("v", v)
+	history.replaceState(null, "", url)
 }
 
-export const ViewNames = ["home", "gear", "bounties"] as const
-export type ViewIdent = typeof ViewNames[number]
 export type ViewData = {
 	render: () => VNode | VNode[]
 	icon: string
