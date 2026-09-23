@@ -75,7 +75,7 @@ export function getAllLocaleNames() {
 }
 
 export function getCurrentLocaleKey() {
-	if (localeKey.length == 0) {
+	if (localeKey.length === 0) {
 		setLocale(getStartingLocale())
 	}
 	return localeKey
@@ -153,7 +153,7 @@ function translate(key: string, locale: string, ctx: TranslateContext, inherited
 					for (const attr of terpAttrs.split(" ")) {
 						if (attr.length > 0) {
 							const attrKv = attr.split("=")
-							if (attrKv.length == 2) {
+							if (attrKv.length === 2) {
 								attrMap.set(attrKv[0], attrKv[1])
 							} else {
 								attrMap.set(attr, "true")

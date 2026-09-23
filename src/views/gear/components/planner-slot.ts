@@ -5,8 +5,8 @@ import type { ISlotModel } from "../models/slot-model"
 import { trText } from "../../../localize/localization"
 import type { ReadonlySignal } from "@preact/signals"
 import type { IGearModel } from "../models/gear-model"
-import { GenericSelect } from "../../../components/generic-select"
-import { GenericNumeric } from "../../../components/generic-numeric"
+import { GenericSelectInput } from "../../../components/generic-select-input"
+import { GenericNumericInput } from "../../../components/generic-numeric-input"
 
 function SetsList(gear: IGearModel, slot: ISlotModel) {
 	const sets = slot.relevantSets.value
@@ -16,7 +16,7 @@ function SetsList(gear: IGearModel, slot: ISlotModel) {
 
 	return html`
 		<div class="flex flex-row items-center">
-			<${GenericNumeric} c="w-24" value=${gear.getSlotRating(slot)} min=0 setter=${slot.setRating}/>
+			<${GenericNumericInput} class="w-24" value=${gear.getSlotRating(slot)} min=0 setter=${slot.setRating}/>
 			<${LocalizedElement} tr="noset_tert" ctx=${{ stat: trText("stat_" + slot.stat.value) }} class="pl-1"/>
 		</div>
 	`
@@ -30,7 +30,7 @@ export function SettedSlot(props: { gear: IGearModel, ident: GearSlotIdent, slot
 		<fieldset class="fieldset">
 			<${LocalizedElement} tag="legend" tr="slot_${ident}" class="fieldset-legend"/>
 			<div class="flex flex-col gap-1">
-				<${GenericSelect<GearStatIdent>} c="grow" value=${slot.stat} setter=${slot.setStat}>
+				<${GenericSelectInput<GearStatIdent>} class="grow" value=${slot.stat} setter=${slot.setStat}>
 					${GearStats.map(s => html`<${LocalizedElement} tag="option" value=${s} tr="generic_counted" ctx=${{ count: slot.getSetsForStat(s).length, text: trText("stat_" + s) }}/>`)}
 				<//>
 				${SetsList(props.gear, slot)}
@@ -44,7 +44,7 @@ export function LoneSlot(props: { ident: string, stat: ReadonlySignal<GearStatId
 		<fieldset class="fieldset">
 			<${LocalizedElement} tag="legend" tr="slot_${props.ident}" class="fieldset-legend"/>
 			<div class="flex flex-col gap-1">
-				<${GenericSelect<GearStatIdent>} c="grow" value=${props.stat} setter=${props.setter}>
+				<${GenericSelectInput<GearStatIdent>} class="grow" value=${props.stat} setter=${props.setter}>
 					${GearStats.map(s => html`<${LocalizedElement} tag="option" value=${s} tr="stat_${s}"/>`)}
 				<//>
 			</div>

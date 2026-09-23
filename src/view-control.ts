@@ -4,8 +4,9 @@ import { computed, signal, type ReadonlySignal } from "@preact/signals"
 import { HomeView } from "./views/home/home-view"
 import { BountyView } from "./views/bounties/bounties-view"
 import { ValorView } from "./views/valor/valor-view"
+import { ProfitView } from "./views/profit/profit-view"
 
-export const ViewNames = ["home", "gear", "bounties", "valor"] as const
+export const ViewNames = ["home", "gear", "bounties", "valor", "profit"] as const
 export type ViewIdent = typeof ViewNames[number]
 
 const startingView = new URLSearchParams(window.location.search).get("v") as ViewIdent | null
@@ -44,5 +45,6 @@ export const Views: Record<ViewIdent, ViewData> = {
 	gear: createViewData("gear", GearView, "iconify-[tabler--user-shield]"),
 	bounties: createViewData("bounties", BountyView, "iconify-[tabler--viewfinder]"),
 	valor: createViewData("valor", ValorView, "iconify-[tabler--swords]"),
+	profit: createViewData("profit", ProfitView, "iconify-[tabler--scale]"),
 }
 Views.home.showInHome = false

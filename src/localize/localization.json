@@ -31,6 +31,10 @@
 		"gcd_x": "{{gcd}}s GCD",
 		"gear_implants": "Implant Stats",
 		"generic_counted": "[{{count}}] {{text}}",
+		"item_new": "New Item",
+		"item_oemrpm": "OEM-37 / RPM-13",
+		"item_srm": "Solid Resource Matrix",
+		"item_legemb": "Legendary Ember",
 		"noset_tert": "{{stat}} provided",
 		"plan_aug_s": "{{stat}} Augments",
 		"plan_aug_total": "Augments",
@@ -49,6 +53,11 @@
 		"preset_budget_ir": "iRating {{rating}}",
 		"preset_budget_none": "None",
 		"preset_none": "Custom",
+		"profit_compete": "Profit Disparity",
+		"profit_cost": "Cost",
+		"profit_cpf": "Pofit / Cost",
+		"profit_sale": "Profit",
+		"profit_title": "Item",
 		"result_overflow": "Waste",
 		"result_naugs": "Augs",
 		"result_ngears": "Gears",
@@ -93,6 +102,7 @@
 		"view_bounties": "Bounty Event Tracker",
 		"view_gear": "Gear Calculator",
 		"view_home": "Home",
+		"view_profit": "Profit Comparison",
 		"view_valor": "Valor Progress"
 	}
 }

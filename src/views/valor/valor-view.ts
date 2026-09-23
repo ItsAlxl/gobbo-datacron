@@ -1,7 +1,7 @@
 import { html } from "htm/preact"
 import { signal } from "@preact/signals"
 import { LocalizedElement } from "../../localize/preact"
-import { GenericNumeric } from "../../components/generic-numeric"
+import { GenericNumericInput } from "../../components/generic-numeric-input"
 import { aggregatedValorXp, maxValorLevel, maxValorXp } from "./valor-xp"
 
 const currentLevel = signal(1)
@@ -35,12 +35,12 @@ export function ValorView() {
 			<${LocalizedElement} tr="valor_xp"/>
 			<${LocalizedElement} tr="valor_total"/>
 			<${LocalizedElement} tr="valor_current"/>
-			<${GenericNumeric} value=${currentLevel} setter=${setCurrentLevel} min=1 max=${maxValorLevel}/>
-			<${GenericNumeric} value=${currentXp} setter=${setCurrentXp} max=${maxValorXp}/>
+			<${GenericNumericInput} value=${currentLevel} setter=${setCurrentLevel} min=1 max=${maxValorLevel}/>
+			<${GenericNumericInput} value=${currentXp} setter=${setCurrentXp} max=${maxValorXp}/>
 			<div>${currentTotal}</div>
 			<${LocalizedElement} tr="valor_target"/>
-			<${GenericNumeric} value=${targetLevel} setter=${setTargetLevel} min=1 max=${maxValorLevel}/>
-			<${GenericNumeric} value=${targetXp} setter=${setTargetXp} max=${maxValorXp}/>
+			<${GenericNumericInput} value=${targetLevel} setter=${setTargetLevel} min=1 max=${maxValorLevel}/>
+			<${GenericNumericInput} value=${targetXp} setter=${setTargetXp} max=${maxValorXp}/>
 			<div>${targetTotal}</div>
 		</div>
 		<div>

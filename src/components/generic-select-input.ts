@@ -5,18 +5,19 @@ import type { ComponentChildren } from "preact"
 interface GenericSelectProps<T> {
 	value: T
 	setter: (v: T) => void
-	c?: string
+	class?: string
 	children?: ComponentChildren
 }
 
-export function GenericSelect<T>({ value, setter, c = "", children }: GenericSelectProps<T>) {
+export function GenericSelectInput<T>(props: GenericSelectProps<T>) {
+	const setter = props.setter
 	const onSelect = useCallback((e: InputEvent) => {
 		setter((e.currentTarget as HTMLSelectElement).value as T)
 	}, [setter])
 
 	return html`
-		<select class="select ${c}" onchange=${onSelect} value=${value}>
-			${children}
+		<select class="select ${props.class ?? ""}" onchange=${onSelect} value=${props.value}>
+			${props.children}
 		</select>
 	`
 }

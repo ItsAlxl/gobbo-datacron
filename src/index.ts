@@ -12,7 +12,7 @@ function createLocaleOption(key: string, name: string) {
 	const li = document.createElement("li")
 
 	const btn = document.createElement("button")
-	if (getCurrentLocaleKey() == key)
+	if (getCurrentLocaleKey() === key)
 		btn.classList.add("menu-active")
 	btn.classList.add("flex")
 

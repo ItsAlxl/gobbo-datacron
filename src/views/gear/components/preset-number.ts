@@ -3,8 +3,8 @@ import type { VNode } from "preact"
 import { LocalizedElement } from "../../../localize/preact"
 import type { ThresholdStatIdent, IGearModel, StatBudgetIdent } from "../models/gear-model"
 import type { IStatModel } from "../models/stat-model"
-import { GenericSelect } from "../../../components/generic-select"
-import { GenericNumeric } from "../../../components/generic-numeric"
+import { GenericSelectInput } from "../../../components/generic-select-input"
+import { GenericNumericInput } from "../../../components/generic-numeric-input"
 
 const GCD_IDENT_PREFIX = "gcd_"
 const GCD_IDENT_PREFIX_LENGTH = GCD_IDENT_PREFIX.length
@@ -34,11 +34,11 @@ function createPresetNumber(ident: string, stat: IStatModel, trPfx: string, trOp
 		<fieldset class="fieldset">
 			<${LocalizedElement} tag="legend" tr="${trPfx}_${ident}" class="fieldset-legend"/>
 			<div class="flex flex-row gap-1">
-				<${GenericSelect<string>} c="grow" value=${stat.derivedPreset} setter=${stat.applyPreset}>
+				<${GenericSelectInput<string>} class="grow" value=${stat.derivedPreset} setter=${stat.applyPreset}>
 					<${LocalizedElement} tag="option" tr="preset_none" value="" disabled/>
 					${presetChoices}
 				<//>
-				<${GenericNumeric} c="w-24" value=${stat.amount} min=0 setter=${stat.setAmount}/>
+				<${GenericNumericInput} class="w-24" value=${stat.amount} min=0 setter=${stat.setAmount}/>
 			</div>
 		</fieldset>
 	`
