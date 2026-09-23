@@ -3,6 +3,7 @@ import { getAlacrityTargetPercentage, getStatRating, statPercLimit, getAlacrityT
 import { StatModel, type IStatModel, type IStatToggle, StatToggleModel, sortedPresetOptionsAsc, sortedPresetOptionsDesc } from "./stat-model"
 import { BodyGearSlots, type GearStatIdent, type GearBodySlotIdent, GearStats, type TargetStatIdent } from "../sets"
 import { SlotModel, type ISlotModel } from "./slot-model"
+import statPresets from "./gear-presets.json"
 
 type StatPresetOptions = { [k: string]: number }
 
@@ -161,26 +162,9 @@ export const GearModel = createModel<IGearModel>(() => {
 	}
 
 	const budget: Record<StatBudgetIdent, IStatModel> = {
-		gear_tert: new StatModel(640, signal({
-			"344": 640,
-			"340": 614,
-			"336": 589,
-		}), sortedPresetOptionsDesc),
-		aug_tert: new StatModel(123, signal({
-			"g86": 162,
-			"p86": 147,
-			"b86": 133,
-			"g77": 130,
-			"b83": 123,
-			"p74": 108,
-			"b73": 95,
-			"p70": 90,
-			"none": 0,
-		}), sortedPresetOptionsDesc),
-		imp_tert: new StatModel(614, signal({
-			"340": 614,
-			"336": 589,
-		}), sortedPresetOptionsDesc),
+		gear_tert: new StatModel(640, signal<StatPresetOptions>(statPresets.gear), sortedPresetOptionsDesc),
+		aug_tert: new StatModel(123, signal<StatPresetOptions>(statPresets.aug), sortedPresetOptionsDesc),
+		imp_tert: new StatModel(614, signal<StatPresetOptions>(statPresets.imp), sortedPresetOptionsDesc),
 	}
 	const implantTypes = [signal<GearStatIdent>("crit"), signal<GearStatIdent>("crit")]
 	const implantContributions = computed(() => {

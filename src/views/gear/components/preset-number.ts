@@ -9,18 +9,30 @@ import { GenericNumeric } from "../../../components/generic-numeric"
 const GCD_IDENT_PREFIX = "gcd_"
 const GCD_IDENT_PREFIX_LENGTH = GCD_IDENT_PREFIX.length
 
-function createPresetNumber(ident: string, stat: IStatModel, tr_pfx: string, tr_opt_pfx?: string) {
+function createPresetNumber(ident: string, stat: IStatModel, trPfx: string, trOptPfx: string | undefined = undefined, splitTr = false) {
 	const presetChoices: VNode[] = []
 	for (const k of stat.presetIter.value()) {
-		if (k.startsWith(GCD_IDENT_PREFIX))
+		if (k.startsWith(GCD_IDENT_PREFIX)) {
 			presetChoices.push(html`<${LocalizedElement} tag="option" tr="gcd_x" value=${k} ctx=${{ gcd: k.substring(GCD_IDENT_PREFIX_LENGTH) }}/>`)
-		else
-			presetChoices.push(html`<${LocalizedElement} tag="option" tr="preset_${tr_opt_pfx ?? ident}_${k}" value=${k}/>`)
+		} else {
+			const trStart = "preset_" + (trOptPfx ?? ident) + "_"
+			const splitAt = splitTr ? k.lastIndexOf("_") : -1
+			if (splitAt >= 0) {
+				const kName = k.substring(0, splitAt)
+				const kRating = splitAt < k.length ? k.substring(splitAt + 1) : ""
+				presetChoices.push(html`
+					<${LocalizedElement} tag="option" tr="${trStart + kName}" value=${k} ctx=${{ rating: kRating }}/>
+				`)
+			}
+			else {
+				presetChoices.push(html`<${LocalizedElement} tag="option" tr="${trStart + k}" value=${k}/>`)
+			}
+		}
 	}
 
 	return html`
 		<fieldset class="fieldset">
-			<${LocalizedElement} tag="legend" tr="${tr_pfx}_${ident}" class="fieldset-legend"/>
+			<${LocalizedElement} tag="legend" tr="${trPfx}_${ident}" class="fieldset-legend"/>
 			<div class="flex flex-row gap-1">
 				<${GenericSelect<string>} c="grow" value=${stat.derivedPreset} setter=${stat.applyPreset}>
 					<${LocalizedElement} tag="option" tr="preset_none" value="" disabled/>
@@ -39,5 +51,5 @@ export function Threshold(props: { ident: ThresholdStatIdent, gear: IGearModel }
 
 export function Budget(props: { ident: StatBudgetIdent, gear: IGearModel }) {
 	const ident = props.ident
-	return createPresetNumber(ident, props.gear.getBudget(ident), "budget", "budget")
+	return createPresetNumber(ident, props.gear.getBudget(ident), "budget", "budget", true)
 }
