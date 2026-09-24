@@ -1,24 +1,19 @@
-import { signal, createModel, type ReadonlySignal, computed } from '@preact/signals'
+import { createModel, type ReadonlySignal, computed } from '@preact/signals'
 import { BountyTargets, BountyPlanets, getBountyTargetsOn, type BountyPlanetIdent, type BountyTargetIdent } from "./bounties"
-import { beginSaver, finishSaver, type SaveData, type SaveTarget } from "../../saveload"
+import { beginSaver, finishSaver, updaterSignal, type SaveComponent, type SaveData, type SaveTarget, type SaveUpdateable } from "../../saveload"
 
 type SavedBountyTarget = [boolean, boolean]
-export interface IBountyTargetModel {
+export interface IBountyTargetModel extends SaveComponent<SavedBountyTarget> {
 	killed: ReadonlySignal<boolean>
 	toggleKilled: () => void
 	capped: ReadonlySignal<boolean>
 	toggleCapped: () => void
 	numNeeds: ReadonlySignal<number>
-	_save: () => SavedBountyTarget
-	_load: (d: SavedBountyTarget) => void
 }
 
-export const BountyTargetModel = createModel<IBountyTargetModel, [() => void]>((triggerSave: () => void) => {
-	const killed = signal(false)
-	killed.subscribe(triggerSave)
-
-	const capped = signal(false)
-	capped.subscribe(triggerSave)
+export const BountyTargetModel = createModel<IBountyTargetModel, [SaveUpdateable]>((saver: SaveUpdateable) => {
+	const killed = updaterSignal(saver, false)
+	const capped = updaterSignal(saver, false)
 
 	return {
 		killed,
@@ -36,7 +31,7 @@ export const BountyTargetModel = createModel<IBountyTargetModel, [() => void]>((
 			return 0
 		}),
 		_save: () => [killed.value, capped.value],
-		_load: (d: SavedBountyTarget) => [killed.value, capped.value] = d,
+		_load: (d) => [killed.value, capped.value] = d,
 	}
 })
 
@@ -51,7 +46,7 @@ export const BountiesModel = createModel<IBountiesModel>(() => {
 
 	const targets: Record<BountyTargetIdent, IBountyTargetModel> = {} as any
 	for (const t of BountyTargets)
-		targets[t] = new BountyTargetModel(saver.triggerUpdate)
+		targets[t] = new BountyTargetModel(saver)
 
 	finishSaver(
 		saver as SaveTarget,
@@ -63,7 +58,7 @@ export const BountiesModel = createModel<IBountiesModel>(() => {
 		},
 		(data: SaveData) => {
 			for (const d of Object.keys(data))
-				targets[d as BountyTargetIdent]._load(data[d as keyof typeof data] as SavedBountyTarget)
+				targets[d as BountyTargetIdent]._load(data[d as keyof typeof data])
 		}
 	)
 

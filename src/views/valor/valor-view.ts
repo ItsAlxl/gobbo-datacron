@@ -1,13 +1,15 @@
 import { html } from "htm/preact"
-import { signal } from "@preact/signals"
 import { LocalizedElement } from "../../localize/preact"
 import { GenericNumericInput } from "../../components/generic-numeric-input"
 import { aggregatedValorXp, maxValorLevel, maxValorXp } from "./valor-xp"
+import { beginSaver, finishSaver, updaterSignal } from "../../saveload"
 
-const currentLevel = signal(1)
-const currentXp = signal(0)
-const targetLevel = signal(100)
-const targetXp = signal(0)
+const saver = beginSaver("valor")
+
+const currentLevel = updaterSignal(saver, 1)
+const currentXp = updaterSignal(saver, 0)
+const targetLevel = updaterSignal(saver, 100)
+const targetXp = updaterSignal(saver, 0)
 
 function setCurrentLevel(l: number) {
 	currentLevel.value = l
@@ -24,6 +26,17 @@ function setTargetLevel(l: number) {
 function setTargetXp(l: number) {
 	targetXp.value = l
 }
+
+type SavedValor = [number, number, number, number]
+finishSaver(
+	saver,
+	(): SavedValor => {
+		return [currentLevel.value, currentXp.value, targetLevel.value, targetXp.value]
+	},
+	(d) => {
+		[currentLevel.value, currentXp.value, targetLevel.value, targetXp.value] = d as SavedValor
+	}
+)
 
 export function ValorView() {
 	const currentTotal = aggregatedValorXp[currentLevel.value - 1] + currentXp.value
