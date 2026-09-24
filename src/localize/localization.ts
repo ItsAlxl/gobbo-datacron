@@ -3,8 +3,8 @@ import validLinks from "./links"
 
 type Locale = { locale_name: string, [k: string]: string }
 export type LinkIdent = keyof typeof validLinks
-export type TranslatedTuple = { text: string, attributes?: Map<string, string> }
-export type TranslatedParagraph = TranslatedTuple[]
+export type TranslatedItem = { text: string, attributes?: Map<string, string> }
+export type TranslatedParagraph = TranslatedItem[]
 type TranslateContextItem = string | number | boolean
 export type TranslateContext = { [k: string]: TranslateContextItem | TranslateContextItem[] } | undefined
 
@@ -146,7 +146,7 @@ function translate(key: string, locale: string, ctx: TranslateContext, inherited
 				const [terpWhole, terpRef, terpLiteral, terpContextual, terpAttrs] = terp
 				cursor = terpIdx + terpWhole.length
 
-				let tuple: TranslatedTuple = { text: "", attributes: inheritedAttrs }
+				let item: TranslatedItem = { text: "", attributes: inheritedAttrs }
 
 				if (terpAttrs && terpAttrs.length > 0) {
 					const attrMap = new Map<string, string>()
@@ -160,31 +160,31 @@ function translate(key: string, locale: string, ctx: TranslateContext, inherited
 							}
 						}
 					}
-					tuple.attributes = attrMap
+					item.attributes = attrMap
 				}
 
 				if (terpRef) {
-					for (const p of translate(terpRef, locale, ctx, tuple.attributes))
+					for (const p of translate(terpRef, locale, ctx, item.attributes))
 						paragraphResults.push(...p)
 				} else {
 					if (terpLiteral) {
-						tuple.text = terpLiteral
+						item.text = terpLiteral
 					}
 
 					if (terpContextual) {
 						if (terpContextual.startsWith("link=")) {
 							const linkSplit = terpContextual.split("=")
-							if (!tuple.attributes) {
-								tuple.attributes = new Map<string, string>()
+							if (!item.attributes) {
+								item.attributes = new Map<string, string>()
 							}
-							tuple.attributes.set(linkSplit[0], linkSplit[1])
-							tuple.text = getLinkUrl(linkSplit[1] as LinkIdent)
+							item.attributes.set(linkSplit[0], linkSplit[1])
+							item.text = getLinkUrl(linkSplit[1] as LinkIdent)
 						} else {
-							tuple.text = getContextString(ctx, terpContextual)
+							item.text = getContextString(ctx, terpContextual)
 						}
 					}
 
-					paragraphResults.push(tuple)
+					paragraphResults.push(item)
 				}
 			}
 
@@ -218,9 +218,9 @@ export function getLinkUrl(link: LinkIdent) {
 	return validLinks[link]
 }
 
-function tupleToElement(tuple: TranslatedTuple) {
+function itemToElement(item: TranslatedItem) {
 	let element
-	const attr = tuple.attributes
+	const attr = item.attributes
 	const linkTarget = attr?.get("link") as LinkIdent
 	if (linkTarget) {
 		element = document.createElement("a") as HTMLAnchorElement
@@ -233,14 +233,14 @@ function tupleToElement(tuple: TranslatedTuple) {
 	if (attr?.has("code"))
 		element.classList.add("font-mono", "whitespace-nowrap")
 
-	element.innerText = tuple.text
+	element.innerText = item.text
 	return element
 }
 
 export function trHtml(k: string, ctx: TranslateContext = undefined, locale: string | undefined = undefined) {
 	return trRaw(k, ctx, locale).map(p => {
 		const div = document.createElement("div")
-		div.replaceChildren(...p.map(tupleToElement))
+		div.replaceChildren(...p.map(itemToElement))
 		return div
 	})
 }

@@ -1,19 +1,19 @@
 import { html } from "htm/preact"
-import { getLinkUrl, trRaw, type LinkIdent, type TranslateContext, type TranslatedTuple } from "./localization"
+import { getLinkUrl, trRaw, type LinkIdent, type TranslateContext, type TranslatedItem } from "./localization"
 
-function tupleToVnode(tuple: TranslatedTuple) {
-	const attr = tuple.attributes
+function itemToVnode(item: TranslatedItem) {
+	const attr = item.attributes
 
 	const codeAttrs = attr?.has("code") ? " font-mono whitespace-nowrap" : undefined
 	const linkTarget = attr?.get("link") as LinkIdent
 
 	if (linkTarget)
-		return html`<a class="link${codeAttrs ?? ""}" href=${getLinkUrl(linkTarget)}>${tuple.text}</a>`
-	return html`<span class=${codeAttrs}>${tuple.text}</span>`
+		return html`<a class="link${codeAttrs ?? ""}" href=${getLinkUrl(linkTarget)}>${item.text}</a>`
+	return html`<span class=${codeAttrs}>${item.text}</span>`
 }
 
 export function trVnodes(k: string, ctx: TranslateContext = undefined, locale: string | undefined = undefined) {
-	return trRaw(k, ctx, locale).map(p => html`<div>${p.map(tupleToVnode)}</div>`)
+	return trRaw(k, ctx, locale).map(p => html`<div>${p.map(itemToVnode)}</div>`)
 }
 
 export function LocalizedElement(props: { tr: string, tag?: string, ctx?: TranslateContext, class?: string, value?: string, disabled?: boolean }) {
