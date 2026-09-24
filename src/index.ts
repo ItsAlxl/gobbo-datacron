@@ -87,7 +87,7 @@ function App() {
 		<div class="toast toast-top toast-end pointer-events-none items-end">
 			<${Toasts}/>
 		</div>
-		<div class="grow flex flex-col items-center px-8 py-4">
+		<div class="grow flex flex-col items-center px-8 py-4 gap-4">
 			<${View}/>
 		</div>
 	`

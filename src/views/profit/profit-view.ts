@@ -1,9 +1,10 @@
 import { html } from "htm/preact"
 import { useCallback } from "preact/hooks"
 import { GenericTextInput } from "../../components/generic-text-input"
-import { ProfitModel, type IProfitItemModel } from "./profit-model"
+import { MONEY_FORMAT_OPTIONS, ProfitModel, type IProfitItemModel } from "./profit-model"
 import { GenericNumericInput } from "../../components/generic-numeric-input"
 import { LocalizedElement } from "../../localize/preact"
+import { ProfileSelect } from "../../components/profile-select"
 
 const profitModel = new ProfitModel()
 
@@ -17,20 +18,21 @@ function createProfitItem(item: IProfitItemModel) {
 	const remove = useCallback(() => profitModel.removeItem(item), [item])
 
 	return html`
-		<button class="btn btn-square" onclick=${remove}>
+		<button class="btn btn-square btn-neutral justify-self-start" onclick=${remove}>
 			<span class="iconify-[tabler--x]"></span>
 		</button>
 		<${GenericTextInput} class="w-full" value=${item.title} setter=${item.setTitle}/>
 		<${GenericNumericInput} value=${item.fragCost} setter=${item.setCost} min=0/>
 		<${GenericNumericInput} value=${item.creditSale} setter=${item.setSale} min=0/>
 		<div class="font-mono p-1 ${isBest ? "ring-2 ring-secondary" : ""}">${item.displayCpf}</div>
-		<div class="font-mono">${diff.toLocaleString()}</div>
+		<div class="font-mono">${diff.toLocaleString(undefined, MONEY_FORMAT_OPTIONS)}</div>
 	`
 }
 
 export function ProfitView() {
 	return html`
-		<div class="grid grid-cols-[0.5fr_5fr_1fr_2fr_3fr_3fr] gap-3 justify-items-end items-center">
+		<${ProfileSelect} profileGroup=${profitModel.profileGroup} class="self-start"/>
+		<div class="grid grid-cols-[0.5fr_4fr_2fr_2fr_2fr_3fr] w-full gap-3 justify-items-end items-center">
 			<div></div>
 			<${LocalizedElement} class="justify-self-center" tr="profit_title"/>
 			<${LocalizedElement} class="justify-self-center" tr="profit_cost"/>
@@ -39,7 +41,7 @@ export function ProfitView() {
 			<${LocalizedElement} tr="profit_compete"/>
 			${profitModel.items.value.map(createProfitItem)}
 		</div>
-		<button class="btn btn-square mt-8" onclick=${profitModel.addItem}>
+		<button class="btn btn-square btn-neutral mt-2" onclick=${profitModel.addItem}>
 			<span class="iconify-[tabler--plus]"></span>
 		</button>
 	`

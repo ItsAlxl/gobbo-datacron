@@ -13,5 +13,5 @@ export function GenericTextInput(props: GenericNumericProps) {
 		setter((e.currentTarget as HTMLInputElement).value)
 	}, [setter])
 
-	return html`<input class="input ${props.class ?? ""}" value=${props.value} oninput=${onInput} />`
+	return html`<input class="input ${props.class ?? ""}" value=${props.value} onchange=${onInput}/>`
 }

@@ -1,6 +1,6 @@
 import { createModel, type ReadonlySignal, computed } from '@preact/signals'
 import { BountyTargets, BountyPlanets, getBountyTargetsOn, type BountyPlanetIdent, type BountyTargetIdent } from "./bounties"
-import { beginSaver, finishSaver, updaterSignal, type SaveComponent, type SaveData, type SaveTarget, type SaveUpdateable } from "../../saveload"
+import { beginSaver, finishSaver, updaterSignal, type SaveComponent, type SaveTarget, type SaveUpdateable } from "../../saveload/saveload"
 
 type SavedBountyTarget = [boolean, boolean]
 export interface IBountyTargetModel extends SaveComponent<SavedBountyTarget> {
@@ -56,9 +56,11 @@ export const BountiesModel = createModel<IBountiesModel>(() => {
 				st[t] = targets[t]._save()
 			return st
 		},
-		(data: SaveData) => {
-			for (const d of Object.keys(data))
-				targets[d as BountyTargetIdent]._load(data[d as keyof typeof data])
+		(data) => {
+			if (data) {
+				for (const d of Object.keys(data))
+					targets[d as BountyTargetIdent]._load(data[d as keyof typeof data])
+			}
 		}
 	)
 

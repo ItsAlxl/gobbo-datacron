@@ -2,7 +2,7 @@ import { html } from "htm/preact"
 import { LocalizedElement } from "../../localize/preact"
 import { GenericNumericInput } from "../../components/generic-numeric-input"
 import { aggregatedValorXp, maxValorLevel, maxValorXp } from "./valor-xp"
-import { beginSaver, finishSaver, updaterSignal } from "../../saveload"
+import { beginSaver, finishSaver, updaterSignal, type SaveTarget } from "../../saveload/saveload"
 
 const saver = beginSaver("valor")
 
@@ -29,12 +29,13 @@ function setTargetXp(l: number) {
 
 type SavedValor = [number, number, number, number]
 finishSaver(
-	saver,
+	saver as SaveTarget,
 	(): SavedValor => {
 		return [currentLevel.value, currentXp.value, targetLevel.value, targetXp.value]
 	},
 	(d) => {
-		[currentLevel.value, currentXp.value, targetLevel.value, targetXp.value] = d as SavedValor
+		if (d)
+			[currentLevel.value, currentXp.value, targetLevel.value, targetXp.value] = d as SavedValor
 	}
 )
 
