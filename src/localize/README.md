@@ -21,7 +21,11 @@ For example, `"{{'This text' link=repo}} is a link to the source code."`
 
 If the translation key is a link, that will be replaced with the full URL of the link. For example, `"This is my website: {{link=alxl}}"` will display `This is my website: https://itsalxl.com`
 
-## Translating context
+## API
+
+This section contains information regarding the use of the localization engine, and is not relevant for localizers.
+
+### Translating Context
 
 When a context value is a string that begins with `"%"`, it's treated the same as `{{%ref}}` interpolation. If you want to pass a literal that begins with `"%"`, start with `"%%"` instead.
 
