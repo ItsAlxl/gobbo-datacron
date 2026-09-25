@@ -19,9 +19,9 @@ function TargetStatReadout(gear: IGearModel, s: TargetStatIdent) {
 	let overflowClass = ""
 	if (overflow) {
 		const over = overflow.value
-		if (over < 0 || over > gear.getBudget("gear_tert").amount.value)
+		if (over < 0 || over >= gear.getBudget("gear_tert").amount.value)
 			overflowClass = "text-error"
-		else if (over > gear.getBudget("aug_tert").amount.value)
+		else if (over >= gear.getBudget("aug_tert").amount.value)
 			overflowClass = "text-warning"
 	}
 
