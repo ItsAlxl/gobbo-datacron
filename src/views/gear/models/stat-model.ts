@@ -1,4 +1,5 @@
-import { signal, createModel, type ReadonlySignal, computed } from '@preact/signals'
+import { createModel, type ReadonlySignal, computed } from '@preact/signals'
+import { updaterSignal, type SaveComponent, type SaveUpdateable } from "../../../saveload/saveload"
 
 export type StatPresetOptions = { [k: string]: number }
 type StatPresetSorter = (p: StatPresetOptions) => StatPresetGenerator
@@ -12,7 +13,8 @@ export function* sortedPresetOptionsDesc(opts: StatPresetOptions) {
 	yield* Object.keys(opts).sort((a, b) => opts[b] - opts[a])
 }
 
-export interface IStatModel {
+export type SavedStat = number
+export interface IStatModel extends SaveComponent<SavedStat> {
 	amount: ReadonlySignal<number>
 	derivedPreset: ReadonlySignal<string>
 	setAmount(value: number): void
@@ -20,8 +22,8 @@ export interface IStatModel {
 	presetIter: ReadonlySignal<() => StatPresetGenerator>
 }
 
-export const StatModel = createModel<IStatModel, [number, ReadonlySignal<StatPresetOptions>, StatPresetSorter]>((initial: number, presetOptions: ReadonlySignal<StatPresetOptions>, sorter: StatPresetSorter) => {
-	const amount = signal(initial)
+export const StatModel = createModel<IStatModel, [SaveUpdateable, number, ReadonlySignal<StatPresetOptions>, StatPresetSorter]>((saver, initial, presetOptions, sorter) => {
+	const amount = updaterSignal(saver, initial)
 	const derivedPreset = computed(() => {
 		const opts = presetOptions.value
 		const v = amount.value
@@ -42,22 +44,27 @@ export const StatModel = createModel<IStatModel, [number, ReadonlySignal<StatPre
 			amount.value = presetOptions.value[k]
 		},
 		presetIter: computed(() => () => sorter(presetOptions.value)),
+		_save: () => amount.value,
+		_load: (d: SavedStat) => amount.value = d,
 	}
 })
 
-export interface IStatToggle {
+export type SavedStatToggle = boolean
+export interface IStatToggle extends SaveComponent<SavedStatToggle> {
 	toggle: () => void
 	active: ReadonlySignal<boolean>
 	result: ReadonlySignal<number>
 }
 
-export const StatToggleModel = createModel<IStatToggle, [number, number?, boolean?]>((onResult: number, offResult: number = 0, start = true) => {
-	const active = signal(start)
+export const StatToggleModel = createModel<IStatToggle, [SaveUpdateable, number, number?, boolean?]>((saver, onResult, offResult = 0, start = true) => {
+	const active = updaterSignal(saver, start)
 	const result = computed(() => active.value ? onResult : offResult)
 
 	return {
 		toggle: () => active.value = !active.value,
 		active,
 		result,
+		_save: () => active.value,
+		_load: (d: SavedStatToggle) => active.value = d,
 	}
 })

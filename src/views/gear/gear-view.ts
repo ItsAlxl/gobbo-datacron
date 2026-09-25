@@ -8,6 +8,7 @@ import { StatToggle } from "./components/stat-toggle"
 import { LoneSlot, SettedSlot } from "./components/planner-slot"
 import { PlannedAug } from "./components/planner-aug"
 import { PlannerResult } from "./components/planner-result"
+import { ProfileSelect } from "../../components/profile-select"
 
 function selectImplant(e: InputEvent) {
 	const elm = e.currentTarget as HTMLSelectElement
@@ -27,6 +28,7 @@ function listRecommendations() {
 const gear = new GearModel()
 export function GearView() {
 	return html`
+		<${ProfileSelect} class="self-start" profileGroup=${gear.profileGroup}/>
 		<${LocalizedElement} tr="title_gear_calculator" class="font-bold text-xl pb-4"/>
 		<div class="grid grid-cols-3 gap-8">
 			<div class="flex flex-col">

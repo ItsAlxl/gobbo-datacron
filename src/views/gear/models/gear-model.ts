@@ -1,9 +1,11 @@
 import { signal, createModel, type ReadonlySignal, computed, type Signal } from '@preact/signals'
 import { getAlacrityTargetPercentage, getStatRating, statPercLimit, getAlacrityTargetRating } from "../calc-config"
-import { StatModel, type IStatModel, type IStatToggle, StatToggleModel, sortedPresetOptionsAsc, sortedPresetOptionsDesc } from "./stat-model"
+import { StatModel, type IStatModel, type IStatToggle, StatToggleModel, sortedPresetOptionsAsc, sortedPresetOptionsDesc, type SavedStatToggle, type SavedStat } from "./stat-model"
 import { BodyGearSlots, type GearStatIdent, type GearBodySlotIdent, GearStats, type TargetStatIdent } from "../sets"
-import { SlotModel, type ISlotModel } from "./slot-model"
+import { SlotModel, type ISlotModel, type SavedSlot } from "./slot-model"
 import statPresets from "./gear-presets.json"
+import { beginSaver, finishProfiledSaver, updaterSignal, type ProfiledSaveTarget, type SaveComponent, type SaveData } from "../../../saveload/saveload"
+import type { IProfiledModel } from "../../../saveload/profile-model"
 
 type StatPresetOptions = { [k: string]: number }
 
@@ -80,7 +82,7 @@ function isRecValid(r: GearRecommendation) {
 	return r.gears.crit >= 0 && r.augs.crit >= 0
 }
 
-export interface IGearModel {
+export interface IGearModel extends IProfiledModel {
 	getThreshold(s: BuildStatIdent): IStatModel
 	getBudget(b: StatBudgetIdent): IStatModel
 	getImplant(idx: number): Signal<GearStatIdent>
@@ -100,9 +102,18 @@ export interface IGearModel {
 	plannedStats: ReadonlySignal<Record<GearStatIdent, number>>
 }
 
+type SavedGear = {
+	g: SavedStatToggle[]
+	t: SavedStat[]
+	b: SavedStat[]
+	e: GearStatIdent
+	s: SavedSlot[]
+	a: number[]
+}
 export const GearModel = createModel<IGearModel>(() => {
-	const alacBufferToggle = new StatToggleModel(0.5)
-	const accBonusToggle = new StatToggleModel(1)
+	const saver = beginSaver("gear")
+	const alacBufferToggle = new StatToggleModel(saver, 0.5)
+	const accBonusToggle = new StatToggleModel(saver, 1)
 
 	const accPresets = computed(() => {
 		const bonus = accBonusToggle.result.value
@@ -113,7 +124,7 @@ export const GearModel = createModel<IGearModel>(() => {
 		}
 	})
 
-	const alacBonus = new StatModel(0, signal({
+	const alacBonus = new StatModel(saver, 0, signal({
 		"none": 0,
 		"3p": 3,
 		"5p": 5,
@@ -156,17 +167,17 @@ export const GearModel = createModel<IGearModel>(() => {
 	})
 
 	const thresholds: Record<BuildStatIdent, IStatModel> = {
-		acc: new StatModel(getStatRating(10 - accBonusToggle.result.value), accPresets, sortedPresetOptionsDesc),
-		alac: new StatModel(getAlacrityTargetRating(1.4, 0, alacBufferToggle.result.value), alacPresets, sortedPresetOptionsAsc),
+		acc: new StatModel(saver, getStatRating(10 - accBonusToggle.result.value), accPresets, sortedPresetOptionsDesc),
+		alac: new StatModel(saver, getAlacrityTargetRating(1.4, 0, alacBufferToggle.result.value), alacPresets, sortedPresetOptionsAsc),
 		alac_bonus: alacBonus,
 	}
 
 	const budget: Record<StatBudgetIdent, IStatModel> = {
-		gear_tert: new StatModel(640, signal<StatPresetOptions>(statPresets.gear), sortedPresetOptionsDesc),
-		aug_tert: new StatModel(123, signal<StatPresetOptions>(statPresets.aug), sortedPresetOptionsDesc),
-		imp_tert: new StatModel(614, signal<StatPresetOptions>(statPresets.imp), sortedPresetOptionsDesc),
+		gear_tert: new StatModel(saver, 640, signal<StatPresetOptions>(statPresets.gear), sortedPresetOptionsDesc),
+		aug_tert: new StatModel(saver, 123, signal<StatPresetOptions>(statPresets.aug), sortedPresetOptionsDesc),
+		imp_tert: new StatModel(saver, 614, signal<StatPresetOptions>(statPresets.imp), sortedPresetOptionsDesc),
 	}
-	const implantTypes = [signal<GearStatIdent>("crit"), signal<GearStatIdent>("crit")]
+	const implantTypes = [updaterSignal<GearStatIdent>(saver, "crit"), updaterSignal<GearStatIdent>(saver, "crit")]
 	const implantContributions = computed(() => {
 		const result: Record<GearStatIdent, number> = {
 			acc: 0,
@@ -216,17 +227,17 @@ export const GearModel = createModel<IGearModel>(() => {
 		}
 	}
 
-	const mainhandSlot = new SlotModel("mainhand")
-	const offhandSlot = new SlotModel("offhand")
+	const mainhandSlot = new SlotModel(saver, "mainhand")
+	const offhandSlot = new SlotModel(saver, "offhand")
 	const bodySlots: Record<GearBodySlotIdent, ISlotModel> = {} as any
 	for (const slot of BodyGearSlots)
-		bodySlots[slot] = new SlotModel(slot)
+		bodySlots[slot] = new SlotModel(saver, slot)
 
-	const earStat = signal<GearStatIdent>("acc")
+	const earStat = updaterSignal<GearStatIdent>(saver, "acc")
 
 	const plannedAugs: Record<GearStatIdent, Signal<number>> = {} as any
 	for (const stat of GearStats)
-		plannedAugs[stat] = signal(0)
+		plannedAugs[stat] = updaterSignal(saver, 0)
 
 	const getSlotRating = (s: ISlotModel) => {
 		const rating = s.rating
@@ -257,6 +268,47 @@ export const GearModel = createModel<IGearModel>(() => {
 
 		return result
 	})
+
+	const toggleSaveOrder = [accBonusToggle, alacBufferToggle]
+	const thresholdSaveOrder = [thresholds.acc, thresholds.alac, thresholds.alac_bonus]
+	const budgetSaveOrder = [budget.aug_tert, budget.gear_tert, budget.imp_tert]
+	const slotSaveOrder = [mainhandSlot, offhandSlot]
+	for (const slot of BodyGearSlots)
+		slotSaveOrder.push(bodySlots[slot])
+
+	function loadComponents<T extends SaveData>(comps: SaveComponent<T>[], data: T[]) {
+		for (let i = 0; i < comps.length; i++)
+			comps[i]._load(data[i])
+	}
+
+	finishProfiledSaver(
+		saver as ProfiledSaveTarget,
+		() => {
+			return {
+				g: toggleSaveOrder.map(tog => tog._save()),
+				t: thresholdSaveOrder.map(th => th._save()),
+				b: budgetSaveOrder.map(budg => budg._save()),
+				s: slotSaveOrder.map(slot => slot._save()),
+				e: earStat.value,
+				a: GearStats.map(stat => plannedAugs[stat].value)
+			} as SavedGear
+		},
+		(d) => {
+			if (d) {
+				const { g, t, b, s, e, a } = d as SavedGear
+
+				loadComponents(toggleSaveOrder, g)
+				loadComponents(thresholdSaveOrder, t)
+				loadComponents(budgetSaveOrder, b)
+				loadComponents(slotSaveOrder, s)
+
+				earStat.value = e
+
+				for (let i = 0; i < a.length; i++)
+					plannedAugs[GearStats[i]].value = a[i]
+			}
+		}
+	)
 
 	return {
 		getThreshold: (s: BuildStatIdent) => thresholds[s],
@@ -291,5 +343,6 @@ export const GearModel = createModel<IGearModel>(() => {
 		setPlannedAug: (s: GearStatIdent, n: number) => plannedAugs[s].value = n,
 		totalPlannedAugs: computed(() => GearStats.reduce((n, s) => n + plannedAugs[s].value, 0)),
 		plannedStats,
+		profileGroup: (saver as ProfiledSaveTarget).profileGroupModel
 	}
 })

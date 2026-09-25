@@ -31,7 +31,7 @@ function createProfitItem(item: IProfitItemModel) {
 
 export function ProfitView() {
 	return html`
-		<${ProfileSelect} profileGroup=${profitModel.profileGroup} class="self-start"/>
+		<${ProfileSelect} class="self-start" profileGroup=${profitModel.profileGroup}/>
 		<div class="grid grid-cols-[0.5fr_4fr_2fr_2fr_2fr_3fr] w-full gap-3 justify-items-end items-center">
 			<div></div>
 			<${LocalizedElement} class="justify-self-center" tr="profit_title"/>
