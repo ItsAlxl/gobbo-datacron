@@ -11,6 +11,10 @@ function getItemIdent(category: string, idx: string) {
 	return getGroupIdent(category) + "@" + idx
 }
 
+function getFallbackTitle(category: string) {
+	return trText("profile_new_" + category)
+}
+
 function loadGroupMeta(groupIdent: string): SavedProfileMeta[] {
 	return JSON.parse(localStorage.getItem(groupIdent) ?? "[]")
 }
@@ -19,16 +23,18 @@ function saveGroupMeta(groupIdent: string, idxs: SavedProfileMeta[]) {
 	localStorage.setItem(groupIdent, JSON.stringify(idxs))
 }
 
-function incrementGroupCount(groupIdent: string) {
+function incrementCategoryCount(category: string) {
+	const groupIdent = getGroupIdent(category)
+
 	const storedMeta = loadGroupMeta(groupIdent)
 	const nextIdx = (storedMeta.length + 1).toString()
-	storedMeta.push([nextIdx, trText("profile_new")])
+	storedMeta.push([nextIdx, getFallbackTitle(category)])
 	saveGroupMeta(groupIdent, storedMeta)
 
 	return nextIdx
 }
 
-function sremoveGroupItem(category: string, index: number) {
+function removeCategoryItem(category: string, index: number) {
 	const groupIdent = getGroupIdent(category)
 
 	const storedMeta = loadGroupMeta(groupIdent)
@@ -65,8 +71,8 @@ interface IProfileModel {
 }
 
 const ProfileModel = createModel<IProfileModel, [string, string?, string?]>((category, idx = undefined, initialTitle = undefined) => {
-	idx ??= incrementGroupCount(getGroupIdent(category))
-	const title = signal(initialTitle ?? trText("profile_new"))
+	idx ??= incrementCategoryCount(category)
+	const title = signal(initialTitle ?? getFallbackTitle(category))
 	return {
 		getId: () => getItemIdent(category, idx),
 		title,
@@ -135,7 +141,7 @@ export const ProfileGroupModel = createModel<IProfileGroupModel, [ProfiledSaveTa
 				const sel = selected.value
 
 				const i = all.indexOf(sel)
-				sremoveGroupItem(category, i)
+				removeCategoryItem(category, i)
 
 				const filtered = all.filter(p => p !== sel)
 				profiles.value = filtered
