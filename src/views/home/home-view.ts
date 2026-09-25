@@ -20,8 +20,13 @@ function createViewButton(v: ViewIdent) {
 
 export function HomeView() {
 	return html`
-		<div class="flex flex-row flex-wrap gap-8 text-lg">
+		<div class="flex flex-row flex-wrap gap-8 text-lg grow">
 			${ViewNames.filter(filterToHome).map(createViewButton)}
+		</div>
+		<div class="collapse collapse-arrow bg-base-200 border-neutral border">
+			<input type="checkbox" />
+			<${LocalizedElement} tr="faq_about_title" class="collapse-title font-semibold after:start-5 after:end-auto pe-4 ps-12"/>
+			<${LocalizedElement} tr="faq_about_desc" class="collapse-content flex flex-col gap-2"/>
 		</div>
 	`
 }

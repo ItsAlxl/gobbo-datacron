@@ -109,6 +109,7 @@ type SavedGear = {
 	e: GearStatIdent
 	s: SavedSlot[]
 	a: number[]
+	m: GearStatIdent[]
 }
 export const GearModel = createModel<IGearModel>(() => {
 	const saver = beginSaver("gear")
@@ -276,9 +277,11 @@ export const GearModel = createModel<IGearModel>(() => {
 	for (const slot of BodyGearSlots)
 		slotSaveOrder.push(bodySlots[slot])
 
-	function loadComponents<T extends SaveData>(comps: SaveComponent<T>[], data: T[]) {
-		for (let i = 0; i < comps.length; i++)
-			comps[i]._load(data[i])
+	function loadComponents<T extends SaveData>(comps: SaveComponent<T>[], data: T[] | undefined) {
+		if (data) {
+			for (let i = 0; i < comps.length; i++)
+				comps[i]._load(data[i])
+		}
 	}
 
 	finishProfiledSaver(
@@ -290,22 +293,30 @@ export const GearModel = createModel<IGearModel>(() => {
 				b: budgetSaveOrder.map(budg => budg._save()),
 				s: slotSaveOrder.map(slot => slot._save()),
 				e: earStat.value,
-				a: GearStats.map(stat => plannedAugs[stat].value)
+				a: GearStats.map(stat => plannedAugs[stat].value),
+				m: implantTypes.map(imp => imp.value)
 			} as SavedGear
 		},
 		(d) => {
 			if (d) {
-				const { g, t, b, s, e, a } = d as SavedGear
+				const { g, t, b, s, e, a, m } = d as Partial<SavedGear>
 
 				loadComponents(toggleSaveOrder, g)
 				loadComponents(thresholdSaveOrder, t)
 				loadComponents(budgetSaveOrder, b)
 				loadComponents(slotSaveOrder, s)
 
-				earStat.value = e
+				if (e)
+					earStat.value = e
 
-				for (let i = 0; i < a.length; i++)
-					plannedAugs[GearStats[i]].value = a[i]
+				if (a) {
+					for (let i = 0; i < a.length; i++)
+						plannedAugs[GearStats[i]].value = a[i]
+				}
+				if (m) {
+					for (let i = 0; i < implantTypes.length; i++)
+						implantTypes[i].value = m[i]
+				}
 			}
 		}
 	)
