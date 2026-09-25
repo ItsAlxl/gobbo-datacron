@@ -1,5 +1,5 @@
 import { html } from "htm/preact"
-import { useCallback, useRef, useState } from "preact/hooks"
+import { useCallback, useEffect, useRef, useState } from "preact/hooks"
 import type { IProfileGroupModel } from "../saveload/profile-model"
 import type { VNode } from "preact"
 
@@ -13,14 +13,23 @@ export function ProfileSelect(props: ProfileSelectProps) {
 
 	const renameTbox = useRef<HTMLInputElement>()
 	const [editMode, setEditMode] = useState(false)
+	const [needsFocus, setNeedsFocus] = useState(false)
 
 	const onSelect = useCallback((e: InputEvent) => {
 		group.selectProfileById((e.currentTarget as HTMLSelectElement).value)
 	}, [group])
 
+	useEffect(() => {
+		if (needsFocus && renameTbox.current) {
+			renameTbox.current.select()
+			setNeedsFocus(false)
+		}
+	}, [editMode, setNeedsFocus])
+
 	const startEdit = useCallback(() => {
 		setEditMode(true)
-	}, [setEditMode])
+		setNeedsFocus(true)
+	}, [setEditMode, setNeedsFocus])
 
 	const endEdit = useCallback(() => {
 		setEditMode(false)
