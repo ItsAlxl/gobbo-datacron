@@ -28,6 +28,8 @@
 		"cbox_alac_buffer": "Include +0.5% buffer for consistent GCDs",
 		"cbox_acc_bonus": "Include +1% from legacy (companion perk)",
 		"config_calcs_preamble": "SWTOR typically gets new coefficients for stat calculations with expansions. To future-proof this tool, you can configure these coefficients to your liking. The default values are confirmed to be correct for at least version {{ver}}",
+		"faq_about_title": "About",
+		"faq_about_desc": "Gobbo Datacron is an {{'open source' link=repo}} set of tools made by {{'alxl' link=alxl}} to help SWTOR players.\n\nThe tool is completely local. None of the information you provide is ever sent to any server, and that information is only ever saved {{'locally' link=localstorage}}. You don't have to take my word for it - here's the {{'source code' link=repo}}, including instructions for running the tool locally.",
 		"gcd_x": "{{gcd}}s GCD",
 		"gear_implants": "Implant Stats",
 		"generic_counted": "[{{count}}] {{text}}",
