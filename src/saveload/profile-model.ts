@@ -45,7 +45,7 @@ function removeCategoryItem(category: string, index: number) {
 
 function findGroupItem(items: SavedProfileMeta[], idx: string) {
 	for (const item of items) {
-		if (item[0] == idx)
+		if (item[0] === idx)
 			return item
 	}
 }
@@ -110,7 +110,7 @@ export const ProfileGroupModel = createModel<IProfileGroupModel, [ProfiledSaveTa
 	const selected = signal<IProfileModel>(profiles.value[0])
 
 	const selectProfile = (p: IProfileModel) => {
-		if (p != selected.value) {
+		if (p !== selected.value) {
 			saveToStorage(saver)
 			selected.value = p
 			loadFromStorage(saver)
