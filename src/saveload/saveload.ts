@@ -91,6 +91,15 @@ export function updaterSignal<T>(st: SaveUpdateable | SaveTarget, initial: T) {
 	return sig
 }
 
+function refreshState() {
+	location.reload()
+}
+
+export function wipeSave() {
+	localStorage.clear()
+	refreshState()
+}
+
 export function getExportText() {
 	const exp: { [k: string]: string } = {}
 	for (let i = 0; i < localStorage.length; i++) {
@@ -108,6 +117,5 @@ export function importText(exp: string) {
 	for (const k of Object.keys(imp))
 		localStorage.setItem(k, imp[k])
 
-	for (const s of saveTargets)
-		loadFromStorage(s)
+	refreshState()
 }

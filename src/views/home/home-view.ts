@@ -1,11 +1,11 @@
 import { html } from "htm/preact"
 import { useEffect } from "preact/hooks"
+import { signal } from "@preact/signals"
 import { LocalizedElement } from "../../localize/preact"
 import { ViewNames, Views, type ViewIdent } from "../../systems/view-control"
 import { Collapsible } from "../../components/collapsible"
-import { signal } from "@preact/signals"
 import { closeModal, showModal } from "../../systems/modal"
-import { getExportText, importText } from "../../saveload/saveload"
+import { getExportText, importText, wipeSave } from "../../saveload/saveload"
 
 const MB_SIZE = 1024 * 1024
 
@@ -65,7 +65,7 @@ function showWipeModal() {
 			tr: "modal_act_confirm",
 			style: "btn-error",
 			onclick: () => {
-				localStorage.clear()
+				wipeSave()
 				refreshStorageUsage()
 				closeModal()
 			}
