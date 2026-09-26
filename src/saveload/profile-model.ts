@@ -27,7 +27,8 @@ function incrementCategoryCount(category: string) {
 	const groupIdent = getGroupIdent(category)
 
 	const storedMeta = loadGroupMeta(groupIdent)
-	const nextIdx = (storedMeta.length + 1).toString()
+	const prevIdx = storedMeta.length === 0 ? -1 : parseInt(storedMeta[storedMeta.length - 1][0])
+	const nextIdx = (prevIdx < Number.MAX_SAFE_INTEGER ? prevIdx + 1 : Number.MIN_SAFE_INTEGER).toString()
 	storedMeta.push([nextIdx, getFallbackTitle(category)])
 	saveGroupMeta(groupIdent, storedMeta)
 
