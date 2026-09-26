@@ -16,7 +16,7 @@ export function trVnodes(k: string, ctx: TranslateContext = undefined, locale: s
 	return trRaw(k, ctx, locale).map(p => html`<div>${p.map(itemToVnode)}</div>`)
 }
 
-export function LocalizedElement(props: { tr: string, tag?: string, ctx?: TranslateContext, class?: string, value?: string, disabled?: boolean }) {
+export function LocalizedElement(props: { tr: string, tag?: string, ctx?: TranslateContext, class?: string, value?: string, disabled?: boolean, onclick?: (e: PointerEvent) => void }) {
 	const t = props.tag ?? "div"
 	const tr = props.tr ?? "NO_KEY_PROVIDED"
 
@@ -27,7 +27,7 @@ export function LocalizedElement(props: { tr: string, tag?: string, ctx?: Transl
 	}
 
 	return html`
-		<${t} data-loc-key=${tr} data-loc-ctx=${ctxJson} class=${props.class} value=${props.value} disabled=${props.disabled}>
+		<${t} data-loc-key=${tr} data-loc-ctx=${ctxJson} class=${props.class} value=${props.value} disabled=${props.disabled} onclick=${props.onclick}>
 			${trVnodes(tr, ctx)}
 		<//>
 	`

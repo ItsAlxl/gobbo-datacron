@@ -91,7 +91,7 @@ export interface IProfileGroupModel {
 	selectProfileById: (idx: string) => void
 	addProfile: () => void
 	removeSelectedProfile: () => void
-	canRemove: ReadonlySignal<boolean>
+	isSingle: ReadonlySignal<boolean>
 }
 
 export const ProfileGroupModel = createModel<IProfileGroupModel, [ProfiledSaveTarget]>((saver) => {
@@ -116,7 +116,7 @@ export const ProfileGroupModel = createModel<IProfileGroupModel, [ProfiledSaveTa
 		}
 	}
 
-	const canRemove = computed(() => profiles.value.length > 1)
+	const isSingle = computed(() => profiles.value.length === 1)
 	return {
 		profiles,
 		selected,
@@ -136,7 +136,7 @@ export const ProfileGroupModel = createModel<IProfileGroupModel, [ProfiledSaveTa
 			selectProfile(fresh)
 		},
 		removeSelectedProfile: () => {
-			if (canRemove.value) {
+			if (!isSingle.value) {
 				const all = profiles.value
 				const sel = selected.value
 
@@ -148,6 +148,6 @@ export const ProfileGroupModel = createModel<IProfileGroupModel, [ProfiledSaveTa
 				selectProfile(filtered[i === filtered.length ? i - 1 : i])
 			}
 		},
-		canRemove
+		isSingle
 	}
 })

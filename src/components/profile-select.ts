@@ -61,7 +61,7 @@ export function ProfileSelect(props: ProfileSelectProps) {
 			<button class="btn btn-neutral btn-square" onclick=${addProfile}>
 				<span class="iconify-[tabler--plus]"></span>
 			</button>
-			<button class="btn btn-neutral btn-square" disabled=${!group.canRemove.value} onclick=${removeProfile}>
+			<button class="btn btn-neutral btn-square" disabled=${group.isSingle} onclick=${removeProfile}>
 				<span class="iconify-[tabler--trash-x]"></span>
 			</button>
 			<select class="select w-full}" onchange=${onSelect} value=${group.selectedId}>

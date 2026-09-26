@@ -24,8 +24,8 @@ function createRow(t: BountyTargetIdent) {
 	const targ = bountiesModel.targets[t]
 	return html`
 		<${LocalizedElement} tr="bounty_targ_${t}" class="justify-self-end"/>
-		<input type="checkbox" checked=${targ.capped.value} class="checkbox" onclick=${targ.toggleCapped} />
-		<input type="checkbox" checked=${targ.killed.value} class="checkbox" onclick=${targ.toggleKilled} />
+		<input type="checkbox" checked=${targ.capped} class="checkbox" onclick=${targ.toggleCapped} />
+		<input type="checkbox" checked=${targ.killed} class="checkbox" onclick=${targ.toggleKilled} />
 		${BountyPlanets.map(p => createPlanetMarker(t, p))}
 	`
 }

@@ -114,7 +114,7 @@ export function GearView() {
 					<${LocalizedElement} tag="legend" tr="gear_implants" class="fieldset-legend"/>
 					<div class="flex flex-row gap-2">
 						${[0, 1].map(idx => html`
-							<select class="select" onchange=${selectImplant} name="implant${idx}" value=${gear.getImplant(idx).value}>
+							<select class="select" onchange=${selectImplant} name="implant${idx}" value=${gear.getImplant(idx)}>
 								${GearStats.map(s => html`<${LocalizedElement} tag="option" tr="stat_${s}" value=${s}/>`)}
 							</select>
 						`)}
