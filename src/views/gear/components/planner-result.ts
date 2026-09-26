@@ -17,15 +17,21 @@ function TargetStatReadout(gear: IGearModel, s: TargetStatIdent) {
 	const overflow = s === "crit" ? undefined : computed(() => rating - gear.getThreshold(s).amount.value)
 
 	let overflowClass = ""
+	let overflowDisplay: string | Signal<number> | undefined = undefined
 	if (overflow) {
 		const over = overflow.value
-		if (over < 0 || over >= gear.getBudget("gear_tert").amount.value)
+		overflowDisplay = over >= 0 ? "+" + over : overflow
+
+		if (over < 0 || over >= gear.getBudget("gear_tert").amount.value) {
 			overflowClass = "text-error"
-		else if (over >= gear.getBudget("aug_tert").amount.value)
-			overflowClass = "text-warning"
+		} else {
+			const augTert = gear.getBudget("aug_tert").amount.value
+			if (augTert > 0 && over >= augTert)
+				overflowClass = "text-warning"
+		}
 	}
 
-	return StatReadout(s, rating, overflow ? (overflow.value > 0 ? "+" + overflow : overflow) : undefined, overflowClass)
+	return StatReadout(s, rating, overflowDisplay, overflowClass)
 }
 
 function formatRatio(r: number) {

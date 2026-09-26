@@ -257,6 +257,7 @@ export const GearModel = createModel<IGearModel>(() => {
 		for (const stat of GearStats) {
 			result[stat] += imps[stat] + plannedAugs[stat].value * budget.aug_tert.amount.value
 		}
+		result[earStat.value] += budget.gear_tert.amount.value
 
 		function contributeSlot(slot: ISlotModel) {
 			result[slot.stat.value] += getSlotRating(slot).value

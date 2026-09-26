@@ -90,3 +90,32 @@ export function updaterSignal<T>(st: SaveUpdateable | SaveTarget, initial: T) {
 	sig.subscribe(st.triggerUpdate)
 	return sig
 }
+
+function refreshState() {
+	location.reload()
+}
+
+export function wipeSave() {
+	localStorage.clear()
+	refreshState()
+}
+
+export function getExportText() {
+	const exp: { [k: string]: string } = {}
+	for (let i = 0; i < localStorage.length; i++) {
+		const key = localStorage.key(i)
+		if (key)
+			exp[key] = localStorage.getItem(key) ?? ""
+	}
+	return JSON.stringify(exp)
+}
+
+export function importText(exp: string) {
+	localStorage.clear()
+
+	const imp = JSON.parse(exp)
+	for (const k of Object.keys(imp))
+		localStorage.setItem(k, imp[k])
+
+	refreshState()
+}

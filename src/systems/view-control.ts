@@ -1,10 +1,10 @@
-import { GearView } from "./views/gear/gear-view"
+import { GearView } from "../views/gear/gear-view"
 import type { VNode } from "preact"
 import { computed, signal, type ReadonlySignal } from "@preact/signals"
-import { HomeView } from "./views/home/home-view"
-import { BountyView } from "./views/bounties/bounties-view"
-import { ValorView } from "./views/valor/valor-view"
-import { ProfitView } from "./views/profit/profit-view"
+import { HomeView } from "../views/home/home-view"
+import { BountyView } from "../views/bounties/bounties-view"
+import { ValorView } from "../views/valor/valor-view"
+import { ProfitView } from "../views/profit/profit-view"
 
 export const ViewNames = ["home", "gear", "bounties", "valor", "profit"] as const
 export type ViewIdent = typeof ViewNames[number]

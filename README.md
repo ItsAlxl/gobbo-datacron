@@ -27,7 +27,7 @@ npm run build
 npm run dev
 ```
 
-The build's output is placed in `dist/` directory. You cannot simply open the html file due to an [intentional security mechanism](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS) built into browsers. Instead, you will need to host the contents of the `apps/web/dist/` directory on a webserver. This can be done locally using Vite (which is installed as a dependency) by executing either of the following commands from the `apps/web/` directory.
+The build's output is placed in the `dist/` directory. You cannot simply open the html file due to an [intentional security mechanism](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS) built into browsers. Instead, you will need to host the contents of the `dist/` directory on a webserver. This can be done locally using Vite (which is installed as a dependency) by executing either of the following commands.
 
 ```sh
 # Use Vite's local webserver

@@ -1,14 +1,49 @@
 import { computed, signal } from "@preact/signals"
 import constants from "./calc-config.json"
+import { beginSaver, finishSaver, updaterSignal, type SaveTarget } from "../../saveload/saveload"
 
-export const statPercLimit = signal(constants.percentageLimit)
-export const statExpBase = signal(constants.exponentBase)
-export const statExpDenom = signal(constants.maxLevel * constants.exponentDenomFactor)
+type SavedCalcConfig = [number, number, number]
+const saver = beginSaver("gcalc")
+
+export const statPercLimit = updaterSignal(saver, constants.percentageLimit)
+export function setStatPercLimit(l: number) {
+	statPercLimit.value = l
+}
+
+export const statExpBase = updaterSignal(saver, constants.exponentBase)
+export function setStatExpBase(b: number) {
+	statExpBase.value = b
+}
+
+export const statExpDenom = updaterSignal(saver, constants.maxLevel * constants.exponentDenomFactor)
+export function setStatExpDenom(d: number) {
+	statExpDenom.value = d
+}
+
+finishSaver(
+	saver as SaveTarget,
+	(): SavedCalcConfig => {
+		return [statPercLimit.value, statExpBase.value, statExpDenom.value]
+	},
+	(s) => {
+		if (s) {
+			[statPercLimit.value, statExpBase.value, statExpDenom.value] = s as SavedCalcConfig
+		}
+	}
+)
 
 const logBase = computed(() => Math.log(statExpBase.value))
 
 export const statCalcFinderPerc = signal(5)
+export function findCalcPerc(p: number) {
+	statCalcFinderPerc.value = p
+}
+
 export const statCalcFinderRating = signal(getStatRating(5))
+export function findCalcRating(r: number) {
+	statCalcFinderRating.value = r
+}
+
 export const statCalcFinderK = computed(() => getStatDenom(statCalcFinderRating.value, statCalcFinderPerc.value))
 
 export const CONFIRMED_CALCUATIONS_VERSION = "7.9.1c"

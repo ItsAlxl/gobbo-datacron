@@ -27,7 +27,8 @@ function incrementCategoryCount(category: string) {
 	const groupIdent = getGroupIdent(category)
 
 	const storedMeta = loadGroupMeta(groupIdent)
-	const nextIdx = (storedMeta.length + 1).toString()
+	const prevIdx = storedMeta.length === 0 ? -1 : parseInt(storedMeta[storedMeta.length - 1][0])
+	const nextIdx = (prevIdx < Number.MAX_SAFE_INTEGER ? prevIdx + 1 : Number.MIN_SAFE_INTEGER).toString()
 	storedMeta.push([nextIdx, getFallbackTitle(category)])
 	saveGroupMeta(groupIdent, storedMeta)
 
@@ -44,7 +45,7 @@ function removeCategoryItem(category: string, index: number) {
 
 function findGroupItem(items: SavedProfileMeta[], idx: string) {
 	for (const item of items) {
-		if (item[0] == idx)
+		if (item[0] === idx)
 			return item
 	}
 }
@@ -91,7 +92,7 @@ export interface IProfileGroupModel {
 	selectProfileById: (idx: string) => void
 	addProfile: () => void
 	removeSelectedProfile: () => void
-	canRemove: ReadonlySignal<boolean>
+	isSingle: ReadonlySignal<boolean>
 }
 
 export const ProfileGroupModel = createModel<IProfileGroupModel, [ProfiledSaveTarget]>((saver) => {
@@ -109,14 +110,14 @@ export const ProfileGroupModel = createModel<IProfileGroupModel, [ProfiledSaveTa
 	const selected = signal<IProfileModel>(profiles.value[0])
 
 	const selectProfile = (p: IProfileModel) => {
-		if (p != selected.value) {
+		if (p !== selected.value) {
 			saveToStorage(saver)
 			selected.value = p
 			loadFromStorage(saver)
 		}
 	}
 
-	const canRemove = computed(() => profiles.value.length > 1)
+	const isSingle = computed(() => profiles.value.length === 1)
 	return {
 		profiles,
 		selected,
@@ -136,7 +137,7 @@ export const ProfileGroupModel = createModel<IProfileGroupModel, [ProfiledSaveTa
 			selectProfile(fresh)
 		},
 		removeSelectedProfile: () => {
-			if (canRemove.value) {
+			if (!isSingle.value) {
 				const all = profiles.value
 				const sel = selected.value
 
@@ -148,6 +149,6 @@ export const ProfileGroupModel = createModel<IProfileGroupModel, [ProfiledSaveTa
 				selectProfile(filtered[i === filtered.length ? i - 1 : i])
 			}
 		},
-		canRemove
+		isSingle
 	}
 })
