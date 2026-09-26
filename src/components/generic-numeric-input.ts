@@ -8,6 +8,7 @@ interface GenericNumericProps {
 	setter: (v: number) => void
 	class?: string
 	parser?: (s: string) => number
+	step?: number
 }
 
 export function GenericNumericInput(props: GenericNumericProps) {
@@ -16,5 +17,5 @@ export function GenericNumericInput(props: GenericNumericProps) {
 		setter((props.parser ?? parseInt)((e.currentTarget as HTMLInputElement).value))
 	}, [setter])
 
-	return html`<input class="input ${props.class ?? ""}" type="number" min=${props.min} max=${props.max} value=${props.value} oninput=${onNumberIn} />`
+	return html`<input class="input ${props.class ?? ""}" type="number" step=${props.step ?? 1} min=${props.min} max=${props.max} value=${props.value} oninput=${onNumberIn} />`
 }

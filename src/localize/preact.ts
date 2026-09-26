@@ -29,6 +29,6 @@ export function LocalizedElement(props: { tr: string, tag?: string, ctx?: Transl
 	return html`
 		<${t} data-loc-key=${tr} data-loc-ctx=${ctxJson} class=${props.class} value=${props.value} disabled=${props.disabled}>
 			${trVnodes(tr, ctx)}
-		</${t}>
+		<//>
 	`
 }

@@ -9,6 +9,9 @@ import { LoneSlot, SettedSlot } from "./components/planner-slot"
 import { PlannedAug } from "./components/planner-aug"
 import { PlannerResult } from "./components/planner-result"
 import { ProfileSelect } from "../../components/profile-select"
+import { Collapsible } from "../../components/collapsible"
+import { GenericNumericInput } from "../../components/generic-numeric-input"
+import { findCalcPerc, findCalcRating, setStatExpBase, setStatExpDenom, setStatPercLimit, statCalcFinderK, statCalcFinderPerc, statCalcFinderRating, statExpBase, statExpDenom, statPercLimit } from "./calc-config"
 
 function selectImplant(e: InputEvent) {
 	const elm = e.currentTarget as HTMLSelectElement
@@ -25,9 +28,72 @@ function listRecommendations() {
 	return gear.gearRecommendations.value.map((rec, idx) => Recommendation({ gear, rec, idx }))
 }
 
+function createGearExplainer(type: string) {
+	return html`
+		<div>
+			<${LocalizedElement} class="font-bold" tr="faq_gear_${type}_title"/>
+			<${LocalizedElement} tr="faq_gear_${type}_desc"/>
+		</div>
+	`
+}
+
 const gear = new GearModel()
 export function GearView() {
 	return html`
+		<div class="flex flex-col self-stretch">
+			<${Collapsible} tr="faq_calc_config_title">
+				<${LocalizedElement} tr="faq_calc_config_preamble" ctx=${{ ver: "7.9" }}/>
+				<div class="flex flex-row items-center justify-center gap-8">
+					<div class="flex flex-col gap-4 max-w-100">
+						<div class="flex flex-row items-end justify-center">
+							<${LocalizedElement} class="italic" tr="calc_name_percentage"/>
+							<div class="whitespace-pre-wrap"> = </div>
+							<${LocalizedElement} class="italic" tr="calc_name_limit"/>
+							<div class="whitespace-pre-wrap"> * ( 1 - </div>
+							<${LocalizedElement} class="italic" tr="calc_name_expbase"/>
+							<div class="flex flex-row mb-3">
+								<div class="whitespace-pre-wrap">( </div>
+								<${LocalizedElement} class="italic" tr="calc_name_rating"/>
+								<div class="whitespace-pre-wrap"> / </div>
+								<${LocalizedElement} class="italic" tr="calc_name_expdenom"/>
+								<div class="whitespace-pre-wrap"> )</div>
+							</div>
+							<div class="whitespace-pre-wrap"> )</div>
+						</div>
+						<div class="grid grid-cols-[repeat(2,auto)] gap-2 items-center grow">
+							<${LocalizedElement} class="justify-self-end" tr="calc_name_limit"/>
+							<${GenericNumericInput} step=${0.0001} value=${statPercLimit} setter=${setStatPercLimit} parser=${parseFloat}/>
+							<${LocalizedElement} class="justify-self-end" tr="calc_name_expbase"/>
+							<${GenericNumericInput} step=${0.0001} value=${statExpBase} setter=${setStatExpBase} parser=${parseFloat}/>
+							<${LocalizedElement} class="justify-self-end" tr="calc_name_expdenom"/>
+							<${GenericNumericInput} step=${0.0001} value=${statExpDenom} setter=${setStatExpDenom} parser=${parseFloat}/>
+						</div>
+					</div>
+					<div class="divider divider-horizontal"></div>
+					<div class="flex flex-col gap-4 max-w-100">
+						<${LocalizedElement} class="text-center" tr="faq_calc_findk_preamble"/>
+						<div class="flex flex-row gap-8">
+							<div class="grid grid-cols-[repeat(2,auto)] gap-2 items-center grow">
+								<${LocalizedElement} class="justify-self-end" tr="calc_name_rating"/>
+								<${GenericNumericInput} step=${0.0001} value=${statCalcFinderRating} setter=${findCalcRating} parser=${parseFloat}/>
+								<${LocalizedElement} class="justify-self-end" tr="calc_name_percentage"/>
+								<${GenericNumericInput} step=${0.0001} value=${statCalcFinderPerc} setter=${findCalcPerc} parser=${parseFloat}/>
+							</div>
+							<div class="flex flex-row items-center">
+								<${LocalizedElement} tr="calc_name_expdenom"/>
+								<div class="whitespace-pre-wrap"> ≈ ${statCalcFinderK.value.toFixed(2)}</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			<//>
+			<${Collapsible} tr="faq_gear_title">
+				${createGearExplainer("acc")}
+				${createGearExplainer("alac")}
+				${createGearExplainer("crit")}
+				${createGearExplainer("tank")}
+			<//>
+		</div>
 		<${ProfileSelect} class="self-start" profileGroup=${gear.profileGroup}/>
 		<${LocalizedElement} tr="title_gear_calculator" class="font-bold text-xl pb-4"/>
 		<div class="grid grid-cols-3 gap-8">
